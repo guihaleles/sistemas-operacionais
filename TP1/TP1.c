@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <pthread.h>
 
+// Comando que estou usando para compilar:
+// gcc -pthread -o TP1 TP1.c
+
 int sum; /* esses dados são compartilhados pelo(s) thread(s) */
 void *runner(void *param); /* os threads chamam essa função */
 int main(int argc, char *argv[])
