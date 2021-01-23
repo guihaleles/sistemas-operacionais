@@ -1,0 +1,55 @@
+\documentclass[journal]{IEEEtran}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{bm, amsmath, amssymb, graphics, setspace}
+\usepackage{tikz}
+\usetikzlibrary{scopes}
+\usetikzlibrary{calc,patterns,angles,quotes}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{siunitx}
+\usepackage{subfig}
+\usepackage{tabularx}
+\usepackage{multicol}
+\usepackage[export]{adjustbox}
+\usepackage{enumerate}
+\usepackage{euscript}
+
+\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
+
+\begin{document}
+       
+\title{\huge Sistemas Operacionais – 2020/2
+	   \huge \\ Trabalho Prático 01}
+
+\author{Guilherme Leles \\ Victor Moraes}
+
+\maketitle
+
+\begin{abstract}
+	\input{Partes/resumo}
+\end{abstract}
+
+\IEEEpeerreviewmaketitle
+
+\section{Introdução}
+    \input{Partes/introducao}
+    
+\section{Especificação}\label{Sec:EspecifDesemp}
+    \input{Partes/especificacoes.tex}
+
+\section{algoritmo}\label{Sec:algoritmo}
+    \input{Partes/algoritmo.tex}
+    
+\section{Resultados Experimentais}\label{Sec:resultados}
+	\input{Partes/resultados.tex}
+	
+\section{Conclusões}\label{Sec:ConsiderFinais}
+	\input{Partes/Conclusao}
+
+\bibliography{reference}
+\bibliographystyle{apalike}
+
+\end{document}

@@ -43,3 +43,57 @@ void *runner(void *param)
         sum += i;
     pthread_exit(0);
 }
+
+
+
+
+void monitor_microwave()
+{
+... // variáveis compartilhadas, variáveis de condição
+esperar(personagem pessoa) {
+printf("%s quer usar o Forno_t\n", nome(b.num));
+... // verifica quem mais quer usar, contadores, variáveis de cond., etc.
+}
+
+
+void liberar(personagem pessoa) {
+printf("%s vai comer\n", nome(b.num));
+... // verifica se tem que liberar alguém, atualiza contadores, etc.
+}
+
+
+verificar() {
+... // Raj verifica se há deadlock e corrige-o
+}
+
+
+typedef struct Pessoa_t
+{
+};
+
+typedef struct Forno_t
+{
+};
+
+void esperar(Pessoa_t pessoa){
+    drand48()
+}
+
+void esquentar(Pessoa_t pessoa){ /* não exige exclusão mútua */
+    
+}
+
+
+void liberar(Pessoa_t pessoa, Forno_t forno){
+    
+}
+
+
+void comer(Pessoa_t pessoa){ // espera um certo tempo aleatório
+    
+}
+
+void acao(Pessoa_t pessoa){
+    sleep(5);
+    verificar(Forno_t);
+}

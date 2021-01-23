@@ -9,7 +9,8 @@
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
-                "-Wall"
+                "-Wall",
+                "-pthread"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
