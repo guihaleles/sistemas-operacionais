@@ -1,0 +1,70 @@
+\documentclass[journal]{IEEEtran}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{bm, amsmath, amssymb, graphics, setspace}
+\usepackage{tikz}
+\usetikzlibrary{scopes}
+\usetikzlibrary{calc,patterns,angles,quotes}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{siunitx}
+\usepackage{subfig}
+\usepackage{tabularx}
+\usepackage{multicol}
+\usepackage[export]{adjustbox}
+\usepackage{enumerate}
+\usepackage{euscript}
+
+\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
+
+\begin{document}
+       
+\title{\huge Laboratório de Controle e Automação I
+	   \huge \\ Projeto Desafio: Rotor Duplo}
+
+\author{Emerson Alves \\ Victor Moraes}
+
+\maketitle
+
+\begin{abstract}
+	\input{Partes/resumo}
+\end{abstract}
+
+\IEEEpeerreviewmaketitle
+
+\section{Introdução}
+	\input{Partes/introducao}
+
+\section{Descrição da Planta}\label{Sec:DescricaoPlanta}
+	\input{Partes/DescricaoPlanta.tex}
+
+\section{Especificação do Desempenho Desejado}\label{Sec:EspecifDesemp}
+	\input{Partes/Especificacoes.tex}
+
+\section{Modelagem Matemática da Planta}\label{Sec:ModelagemPlanta}
+	\input{Partes/ModelagemPlanta.tex}
+
+\section{Validação do Modelo}\label{Sec:ValidacaoModelo}
+	\input{Partes/ValidacaoModelo.tex}
+
+\section{Desacoplamento}\label{Sec:Desacopla}
+	\input{Partes/Desacoplamento.tex}
+
+\section{Controle por Realimentação de Estados}\label{Sec:ControleEE}
+	\input{Partes/ControleEspacoEstados.tex}
+
+\section{Controle PID}\label{Sec:ControlePID}
+	\input{Partes/ControlePID.tex}
+
+\section{Resultados Experimentais em MF}\label{Sec:ResultadosMF}
+	\input{Partes/ResultadosExperMF.tex}
+	
+\section{Conclusões}\label{Sec:ConsiderFinais}
+	\input{Partes/Conclusao}
+
+\bibliography{reference}
+\bibliographystyle{apalike}
+
+\end{document}
