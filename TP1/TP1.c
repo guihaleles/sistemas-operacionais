@@ -25,7 +25,8 @@ typedef struct Pessoa_t{
     char name[20];
     Node_heap_t* node_heap;
     Pessoa_t* partner;
-    int priority;
+    int priority, id, idx_partner;
+    
 } Pessoa_t;
 
 typedef struct Forno_t{
@@ -33,15 +34,15 @@ typedef struct Forno_t{
     bool liberado;
 } Forno_t;
 
-//Matrix de priorities:
-char names_persons = {"Sheldon", "Howard", "Leonard", "Stuart", "Penny", "Bernardette", "Amy", "Raj", "Kripke"}
+#define num_persons 8
+// Priorities Matrix:
+char persons_names = {"Sheldon", "Howard", "Leonard", "Stuart", "Penny", "Bernardette", "Amy", "Kripke"}
 int priorities =  { {1, 1, 0, 1, 1, 1, 1, 1}, //Sheldon     8
                         {0, 1, 1, 1, 1, 1, 1, 1}, //Howard     8
                         {1, 0, 1, 1, 1, 1, 1, 1}, //Leonard    8
                         {0, 0, 0, 1, 1, 1, 1, 1}, //Stuart     5
                         {0, 0, 0, 0, 0, 0, 0, 1}, //Amy        1 
                         {0, 0, 0, 0, 0, 0, 0, 1}, //Bernadette 1
-                        {0, 0, 0, 0, 0, 0, 0, 1}, //Raj        1 
                         {0, 0, 0, 0, 0, 0, 0, 1}, //Penny      1 
                         {0, 0, 0, 0, 0, 0, 0, 0} //Kripke      0
                   };
@@ -52,7 +53,6 @@ int partners = {   4, //Sheldon & Amy
                     -1, //Stuart
                     7, //Amy & Sheldon
                     7, //Bernadette & Howard
-                    -1, //Raj
                     7, //Penny & Leonard
                     -1 //Kripke
                 };
@@ -61,7 +61,7 @@ bool comparison(Node_heap_t *a, Node_heap_t *b) {
     if   (a->data.priority > b->data.priority)
         return true;
     else if(a->data.priority = b->data.priority){
-        if (a->data.precedencia[b->data.id] > b->data.precedencia[a->data.id]){
+        if (a->data.precedence[b->data.id] > b->data.precedence[a->data.id]){
             return true;
         } else {
             return false;
@@ -71,18 +71,18 @@ bool comparison(Node_heap_t *a, Node_heap_t *b) {
 }                
 void init_persons(Pessoa_t ** persons){
         for (int i=0; i<10; i++){
-        persons[i].id = i;    
-        persons[i].name = names_persons[i];
-        persons[i].idx_partner = partners[i];
-        persons[i].partner = persons[partners[i]];
-        persons[i].priority_node = (Node_heap_t*) malloc(sizeof(Node_heap_t));
-        int priority =0;
-        for (int j =0, j<num_persons, j++)
-            priority+=priorities[i][j];
-        persons[i].priority_node.data = persons[i];
-        persons[i].priority_node.comparison = comparison;
-        persons[i].priority_node->i = priority;
-        persons[i].precedencias=priorities[i];
+            persons[i].id = i;    
+            persons[i].name = persons_names[i];
+            persons[i].idx_partner = partners[i];
+            persons[i].partner = persons[partners[i]];
+            persons[i].priority_node = (Node_heap_t*) malloc(sizeof(Node_heap_t));
+            int priority =0;
+            for (int j =0, j<num_persons, j++)
+                priority+=priorities[i][j];
+            persons[i].priority_node.data = persons[i];
+            persons[i].priority_node.comparison = comparison;
+            persons[i].priority_node->i = priority;
+            persons[i].precedencias=priorities[i];
     }  
 }
 /
