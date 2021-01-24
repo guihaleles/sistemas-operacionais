@@ -3,13 +3,12 @@
 #ifndef HEAP_C
 #define HEAP_C
 #include "heap.h"
-typedef enum bool {false, true} bool;
+#include <stdbool.h>
 int size = 0;
-typedef struct Nodes_heap_t{} Node_heap_t;
-typedef struct Nodes_heap_t {
+typedef struct Node_heap_t {
     int i; // priority id
     void * data;
-    bool *comparison(Node_heap_t *a, Node_heap_t *b);
+    bool (*comparison)(struct Node_heap_t *a, struct Node_heap_t *b);
 } Node_heap_t;
 
 void swap(Node_heap_t **a, Node_heap_t **b) {
@@ -32,9 +31,9 @@ void heapify(Node_heap_t* heap[], int size, int i) {
     int largest = i;
     int l = 2 * i + 1;
     int r = 2 * i + 2;
-    if (l < size && comparison(heap[l], heap[largest])
+    if (l < size && comparison(heap[l], heap[largest]))
       largest = l;
-    if (r < size && comparison(heap[r]->i,heap[largest]->i)
+    if (r < size && comparison(heap[r],heap[largest]))
       largest = r;
 
     // Swap and continue heapifying if root is not largest
@@ -46,12 +45,12 @@ void heapify(Node_heap_t* heap[], int size, int i) {
 }
 
 // Function to heap_insert an element into the tree
-void heap_insert(Node_heap_t* heap[], Node_heap_t* newNum) {
+void heap_insert(Node_heap_t* heap[], Node_heap_t* item) {
   if (size == 0) {
-    heap[0] = newNum;
+    heap[0] = item;
     size += 1;
   } else {
-    heap[size] = newNum;
+    heap[size] = item;
     size += 1;
     for (int i = size / 2 - 1; i >= 0; i--) {
       heapify(heap, size, i);
