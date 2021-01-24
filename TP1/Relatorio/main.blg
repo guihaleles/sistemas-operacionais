@@ -2,11 +2,11 @@ This is BibTeX, Version 0.99d (TeX Live 2019/Debian)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 The style file: apalike.bst
+I found no \citation commands---while reading file main.aux
 Database file #1: reference.bib
-Warning--I didn't find a database entry for "ManualRotor"
 You've used 0 entries,
             1935 wiz_defined-function locations,
-            473 strings with 3691 characters,
+            471 strings with 3669 characters,
 and the built_in function-call counts, 17 in all, are:
 = -- 0
 > -- 0
@@ -45,4 +45,4 @@ warning$ -- 0
 while$ -- 0
 width$ -- 0
 write$ -- 2
-(There was 1 warning)
+(There was 1 error message)

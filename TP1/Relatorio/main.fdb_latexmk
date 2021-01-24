@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex main"] 1611443061 "main.aux" "main.bbl" "main" 1611443061
+["bibtex main"] 1611454144 "main.aux" "main.bbl" "main" 1611454144
   "/usr/share/texlive/texmf-dist/bibtex/bst/base/apalike.bst" 1292289607 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "main.aux" 1611443061 3496 772e7ca368080a3bee963fd4d89f6bed "pdflatex"
-  "reference.bib" 1611452684 1887 1681240102342b9384ebe747f0d383da ""
+  "main.aux" 1611454144 3473 7c6a143eacc46748ccc194bae315349a "pdflatex"
+  "reference.bib" 1611444833 1887 1681240102342b9384ebe747f0d383da ""
   (generated)
   "main.blg"
   "main.bbl"
-["pdflatex"] 1611443061 "/media/vektor/Data/UFMG/SO/Tp1/Relatorio/main.tex" "main.pdf" "main" 1611443061
+["pdflatex"] 1611454144 "/media/vektor/Data/UFMG/SO/Tp1/Relatorio/main.tex" "main.pdf" "main" 1611454144
   "/etc/texmf/web2c/texmf.cnf" 1602506376 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/media/vektor/Data/UFMG/SO/Tp1/Relatorio/main.tex" 1611442788 1260 a58ae07b3d36afcd39d694122b7c7a8a ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -212,21 +212,21 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1581979058 38841 ce3692aa899bb693b90b87eaa5d4d84e ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1608850885 4770781 1ed1abab22da9c3e2cc82e4db562318b ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1608850898 8255852 6c13d062fbda3daa2acda8211f5eff2e ""
-  "Partes/algoritmo.tex" 1611452684 1743 6a5e8db16f6db8140815b13f9e622935 ""
-  "Partes/conclusao.tex" 1611452684 220 c13adb843125deb9a96cd73fb702b1e6 ""
+  "Partes/algoritmo.tex" 1611444747 1249 fcfd7653e71a79f41a86ecb506da2ee3 ""
+  "Partes/conclusao.tex" 1611446322 223 6b897ac57e0e3c290b36d5d538ff3f81 ""
   "Partes/especificacoes.tex" 1611452684 841 a464a643f560b6d42e8b5570b81543a2 ""
   "Partes/introducao.tex" 1611452684 1306 c7a9c96b4049a1676eee15ac38646200 ""
-  "Partes/resultados.tex" 1611452684 1869 bcc1093106d3a0bb34a8e5eae1c23a4e ""
+  "Partes/resultados.tex" 1611444719 1438 85069898e5627840d8d64440ee358c72 ""
   "Partes/resumo.tex" 1611452684 759 a26811a00c583730f81664dddaf68df6 ""
   "figures/pitch-roll-heading.jpg" 1611452684 29524 d8137280a888d0b69f4959082bc27171 ""
   "figures/resultados/valida_pitch.eps" 1611452684 771738 9126b38b94dba67590bd21319b3e26e9 ""
   "figures/resultados/valida_yaw.eps" 1611452684 701577 7654412e683c6aee6960673dd0eb02d6 ""
   "figures/twin_rotor.PNG" 1611452684 131003 45982cf4a10e6c96a769b3f485c27811 ""
-  "main.aux" 1611443061 3496 772e7ca368080a3bee963fd4d89f6bed "pdflatex"
-  "main.bbl" 1611443061 49 0eba253fc001332e731e8aba3f23127b "bibtex main"
-  "main.out" 1611443061 408 55bebe04a1d36acdab08497043982b87 "pdflatex"
+  "main.aux" 1611454144 3473 7c6a143eacc46748ccc194bae315349a "pdflatex"
+  "main.bbl" 1611454144 49 0eba253fc001332e731e8aba3f23127b "bibtex main"
+  "main.out" 1611454144 408 55bebe04a1d36acdab08497043982b87 "pdflatex"
   (generated)
-  "main.aux"
-  "main.log"
   "main.out"
+  "main.aux"
   "main.pdf"
+  "main.log"
