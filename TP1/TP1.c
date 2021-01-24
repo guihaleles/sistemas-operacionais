@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
-
+#include <sys/queue.h>
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
 
@@ -103,6 +103,7 @@ int rand_int(){
     return ret;
 }
 
+// FIFO
 
 
 // Comando que estou usando para compilar:
@@ -113,8 +114,8 @@ int sum; /* esses dados são compartilhados pelo(s) thread(s) */
 int main(int argc, char *argv[])
 {
 
-    pthread_t tid; /* o identificador do thread */
-    pthread_attr_t attr; /* conjunto de atributos do thread */
+    pthread_t tid[5]; /* o identificador do thread */
+    pthread_attr_t attr[5]; /* conjunto de atributos do thread */
 
     if (argc != 2) {
         fprintf(stderr,"usage: a.out <integer value>\n");
@@ -136,13 +137,23 @@ int main(int argc, char *argv[])
 	}                            
                             
     /* obtém os atributos default */
-    pthread_attr_init(&attr);
 
-    /* cria o thread */
-    pthread_create(&tid,&attr,runner,argv[1]);
+	//Create thread
+	pthread_t dit[5];
+	for (int i = 0; i < 5; i++)
+	{
+        pthread_attr_init(&attr);
+		pthread_create(&dit[i], NULL, thr, (void *)i);
+	}
 
-    /* espera o thread ser encerrado */
-    pthread_join(tid,NULL);
-    printf("sum = %d\n",sum);
+	//Recycle thread
+	for (int i = 0; i < 5; i++)
+	{
+		pthread_join(dit[i], NULL);
+	}
+	//Destruction
+	pthread_exit(NULL);
+
+	return 0;
 }
     
