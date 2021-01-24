@@ -7,19 +7,44 @@
 #include "heap/heap.h"
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
+/mutex 
+pthread_mutex_t lock[5];
+
+typedef enum
+{
+    false = 0,
+    true  = 1,
+} bool;
+
+#define DETERMINISTIC true
+
+int sum; /* esses dados são compartilhados pelo(s) thread(s) */
+
+typedef struct Pessoa_t{
+    int espera;
+    char name[20];
+    Node_heap_t* node_heap;
+    Pessoa_t* partner;
+    int priority;
+} Pessoa_t;
+
+typedef struct Forno_t{
+    int tempo_restante;
+    bool liberado;
+} Forno_t;
 
 //Matrix de priorities:
 char names_persons = {"Sheldon", "Howard", "Leonard", "Stuart", "Penny", "Bernardette", "Amy", "Raj", "Kripke"}
-int priorities =  { {1, 1, 0, 1, 1, 1, 1, 1}, //Sheldon
-                     {0, 1, 1, 1, 1, 1, 1, 1}, //Howard
-                     {1, 0, 1, 1, 1, 1, 1, 1}, //Leonard
-                     {0, 0, 0, 1, 1, 1, 1, 1}, //Stuart
-                     {0, 0, 0, 0, 0, 0, 0, 1}, //Amy
-                     {0, 0, 0, 0, 0, 0, 0, 1}, //Bernadette
-                     {0, 0, 0, 0, 0, 0, 0, 1}, //Raj
-                     {0, 0, 0, 0, 0, 0, 0, 1}, //Penny
-                     {0, 0, 0, 0, 0, 0, 0, 0} //Kripke
-                     };
+int priorities =  { {1, 1, 0, 1, 1, 1, 1, 1}, //Sheldon     8
+                        {0, 1, 1, 1, 1, 1, 1, 1}, //Howard     8
+                        {1, 0, 1, 1, 1, 1, 1, 1}, //Leonard    8
+                        {0, 0, 0, 1, 1, 1, 1, 1}, //Stuart     5
+                        {0, 0, 0, 0, 0, 0, 0, 1}, //Amy        1 
+                        {0, 0, 0, 0, 0, 0, 0, 1}, //Bernadette 1
+                        {0, 0, 0, 0, 0, 0, 0, 1}, //Raj        1 
+                        {0, 0, 0, 0, 0, 0, 0, 1}, //Penny      1 
+                        {0, 0, 0, 0, 0, 0, 0, 0} //Kripke      0
+                  };
                      
 int partners = {   4, //Sheldon & Amy
                     5, //Howard & Bernadette
@@ -31,6 +56,7 @@ int partners = {   4, //Sheldon & Amy
                     7, //Penny & Leonard
                     -1 //Kripke
                 };
+                
 bool comparison(Node_heap_t *a, Node_heap_t *b) {
     if   (a->data.priority > b->data.priority)
         return true;
@@ -59,30 +85,7 @@ void init_persons(Pessoa_t ** persons){
         persons[i].precedencias=priorities[i];
     }  
 }
-//mutex 
-pthread_mutex_t lock[5];
-
-typedef enum
-{
-    false = 0,
-    true  = 1,
-} bool;
-
-#define DETERMINISTIC true
-
-int sum; /* esses dados são compartilhados pelo(s) thread(s) */
-
-typedef struct Pessoa_t{
-    int espera;
-    char name[20];
-    Node_heap_t* node_heap;
-    Pessoa_t* partner;
-} Pessoa_t;
-
-typedef struct Forno_t{
-    int tempo_restante;
-    bool liberado;
-} Forno_t;
+/
 
 /* O thread assumirá o controle nessa função */
 void *runner(void *param)  /* os threads chamam essa função */
@@ -93,8 +96,6 @@ void *runner(void *param)  /* os threads chamam essa função */
         sum += i;
     pthread_exit(0);
 }
-
-
 
 
 void monitor_microwave(Pessoa_t pessoa)
@@ -181,8 +182,8 @@ int main(int argc, char *argv[])
     pthread_t tid[5]; /* o identificador do thread */
     pthread_attr_t attr[5]; /* conjunto de atributos do thread */
     
-    Pessoa_t persons[9];
-    init_perssoas(&persons);
+    Pessoa_t persons[num_persons];
+    init_persons(&persons);
     
                       
 	//initialization

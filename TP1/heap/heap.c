@@ -9,8 +9,7 @@ int size = 0;
 typedef struct Nodes_heap_t {
     int i; // priority id
     void * data;
-    Node_heap_t* self;
-    bool comparison(Node_heap_t *a, Node_heap_t *b);
+    bool *comparison(Node_heap_t *a, Node_heap_t *b);
 }Node_heap_t;
 
 void swap(Node_heap_t **a, Node_heap_t **b) {
@@ -33,9 +32,9 @@ void heapify(Node_heap_t* heap[], int size, int i) {
     int largest = i;
     int l = 2 * i + 1;
     int r = 2 * i + 2;
-    if (l < size && heap[l]->i > heap[largest]->i)
+    if (l < size && comparison(heap[l], heap[largest])
       largest = l;
-    if (r < size && heap[r]->i > heap[largest]->i)
+    if (r < size && comparison(heap[r]->i,heap[largest]->i)
       largest = r;
 
     // Swap and continue heapifying if root is not largest

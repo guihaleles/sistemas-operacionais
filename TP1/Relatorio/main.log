@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.12.24)  23 JAN 2021 23:09
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.12.24)  24 JAN 2021 13:30
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/media/vektor/Data/UFMG/SO/Tp1/Relatorio/main.tex
-(/media/vektor/Data/UFMG/SO/Tp1/Relatorio/main.tex
+**/media/vektor/Data/UFMG/SO/repo/sistemas-operacionais/TP1/Relatorio/main.tex
+(/media/vektor/Data/UFMG/SO/repo/sistemas-operacionais/TP1/Relatorio/main.tex
 LaTeX2e <2020-02-02> patch level 2
 L3 programming layer <2020-02-14> (/usr/share/texlive/texmf-dist/tex/latex/IEEEtran/IEEEtran.cls
 Document Class: IEEEtran 2015/08/26 V1.8b by Michael Shell
@@ -853,10 +853,10 @@ Package pdftex.def Info: figures/twin_rotor.PNG  used on input line 8.
 
  <./figures/pitch-roll-heading.jpg> <./figures/twin_rotor.PNG>]) (./Partes/resultados.tex
 Package epstopdf Info: Source file: <figures/resultados/valida_pitch.eps>
-(epstopdf)                    date: 2021-01-23 22:44:44
+(epstopdf)                    date: 2021-01-24 09:38:57
 (epstopdf)                    size: 771738 bytes
 (epstopdf)             Output file: <figures/resultados/valida_pitch-eps-converted-to.pdf>
-(epstopdf)                    date: 2021-01-23 23:08:55
+(epstopdf)                    date: 2021-01-24 09:38:57
 (epstopdf)                    size: 191753 bytes
 (epstopdf)             Command: <epstopdf --outfile=figures/resultados/valida_pitch-eps-converted-to.pdf figures/resultados/valida_pitch.eps>
 (epstopdf)             \includegraphics on input line 9.
@@ -872,10 +872,10 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 9--10
  []
 
 Package epstopdf Info: Source file: <figures/resultados/valida_yaw.eps>
-(epstopdf)                    date: 2021-01-23 22:44:44
+(epstopdf)                    date: 2021-01-24 09:38:57
 (epstopdf)                    size: 701577 bytes
 (epstopdf)             Output file: <figures/resultados/valida_yaw-eps-converted-to.pdf>
-(epstopdf)                    date: 2021-01-23 23:08:56
+(epstopdf)                    date: 2021-01-24 09:38:57
 (epstopdf)                    size: 153125 bytes
 (epstopdf)             Command: <epstopdf --outfile=figures/resultados/valida_yaw-eps-converted-to.pdf figures/resultados/valida_yaw.eps>
 (epstopdf)             \includegraphics on input line 16.
@@ -922,12 +922,12 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 55.
  ) 
 Here is how much of TeX's memory you used:
  23646 strings out of 481239
- 468165 string characters out of 5920376
+ 468246 string characters out of 5920376
  719140 words of memory out of 5000000
  38386 multiletter control sequences out of 15000+600000
  569744 words of font info for 97 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,8n,79p,844b,859s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 60i,8n,79p,871b,859s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
 Output written on main.pdf (2 pages, 591489 bytes).
 PDF statistics:
