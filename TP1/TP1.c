@@ -7,7 +7,7 @@
 #include "heap/heap.h"
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
-/mutex 
+//mutex 
 pthread_mutex_t lock[5];
 
 typedef enum
@@ -19,15 +19,17 @@ typedef enum
 #define DETERMINISTIC true
 
 int sum; /* esses dados são compartilhados pelo(s) thread(s) */
-
 typedef struct Pessoa_t{
     int espera;
     char name[20];
     Node_heap_t* node_heap;
-    Pessoa_t* partner;
+    struct Pessoas_t* partner;
     int priority, id, idx_partner;
-    
+    Node_heap_t* priority_node;
 } Pessoa_t;
+ 
+
+
 
 typedef struct Forno_t{
     int tempo_restante;
@@ -36,28 +38,30 @@ typedef struct Forno_t{
 
 #define num_persons 8
 // Priorities Matrix:
-char persons_names = {"Sheldon", "Howard", "Leonard", "Stuart", "Penny", "Bernardette", "Amy", "Kripke"}
-int priorities =  { {1, 1, 0, 1, 1, 1, 1, 1}, //Sheldon     8
-                        {0, 1, 1, 1, 1, 1, 1, 1}, //Howard     8
-                        {1, 0, 1, 1, 1, 1, 1, 1}, //Leonard    8
-                        {0, 0, 0, 1, 1, 1, 1, 1}, //Stuart     5
-                        {0, 0, 0, 0, 0, 0, 0, 1}, //Amy        1 
-                        {0, 0, 0, 0, 0, 0, 0, 1}, //Bernadette 1
-                        {0, 0, 0, 0, 0, 0, 0, 1}, //Penny      1 
-                        {0, 0, 0, 0, 0, 0, 0, 0} //Kripke      0
-                  };
+const char persons_names[num_persons][20] = {"Sheldon", "Howard", "Leonard", "Stuart",
+                      "Penny", "Bernardette", "Amy", "Kripke"};
+const int priorities[num_persons][num_persons] =  { 
+                                        {1, 1, 0, 1, 1, 1, 1, 1}, //Sheldon    8
+                                        {0, 1, 1, 1, 1, 1, 1, 1}, //Howard     8
+                                        {1, 0, 1, 1, 1, 1, 1, 1}, //Leonard    8
+                                        {0, 0, 0, 1, 1, 1, 1, 1}, //Stuart     5
+                                        {0, 0, 0, 0, 0, 0, 0, 1}, //Amy        1 
+                                        {0, 0, 0, 0, 0, 0, 0, 1}, //Bernadette 1
+                                        {0, 0, 0, 0, 0, 0, 0, 1}, //Penny      1 
+                                        {0, 0, 0, 0, 0, 0, 0, 0} //Kripke      0
+                                };
                      
-int partners = {   4, //Sheldon & Amy
-                    5, //Howard & Bernadette
-                    7, //Leonard & Penny
+int partners = {    4,  //Sheldon & Amy
+                    5,  //Howard & Bernadette
+                    7,  //Leonard & Penny
                     -1, //Stuart
-                    7, //Amy & Sheldon
-                    7, //Bernadette & Howard
-                    7, //Penny & Leonard
-                    -1 //Kripke
+                    0,  //Amy & Sheldon
+                    1,  //Bernadette & Howard
+                    2,  //Penny & Leonard
+                    -1  //Kripke
                 };
                 
-bool comparison(Node_heap_t *a, Node_heap_t *b) {
+bool person_comparison(Node_heap_t *a, Node_heap_t *b) {
     if   (a->data.priority > b->data.priority)
         return true;
     else if(a->data.priority = b->data.priority){
@@ -69,23 +73,23 @@ bool comparison(Node_heap_t *a, Node_heap_t *b) {
         
     }
 }                
-void init_persons(Pessoa_t ** persons){
+void init_persons(Pessoa_t** persons){
         for (int i=0; i<10; i++){
-            persons[i].id = i;    
-            persons[i].name = persons_names[i];
-            persons[i].idx_partner = partners[i];
-            persons[i].partner = persons[partners[i]];
-            persons[i].priority_node = (Node_heap_t*) malloc(sizeof(Node_heap_t));
-            int priority =0;
-            for (int j =0, j<num_persons, j++)
+            persons[i]->id = i;    
+            persons[i]->name = persons_names[i];
+            persons[i]->idx_partner = partners[i];
+            persons[i]->partner = persons[partners[i]];
+            persons[i]->priority_node = (Node_heap_t*) malloc(sizeof(Node_heap_t));
+            int priority = 0;
+            for (int j = 0; j<num_persons; j++)
                 priority+=priorities[i][j];
-            persons[i].priority_node.data = persons[i];
-            persons[i].priority_node.comparison = comparison;
-            persons[i].priority_node->i = priority;
-            persons[i].precedencias=priorities[i];
+            persons[i]->priority_node->data = persons[i];
+            persons[i]->priority_node->comparison = person_comparison;
+            persons[i]->priority_node->i = priority;
+            persons[i]->precedencias = priorities[i];
     }  
 }
-/
+
 
 /* O thread assumirá o controle nessa função */
 void *runner(void *param)  /* os threads chamam essa função */
