@@ -4,10 +4,27 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
-#include <sys/queue.h>
+#include "heap/heap.h"
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
 
+//Matrix de prioridades:
+char nomes_pessoas = {"Sheldon", "Howard", "Leonard", "Stuart", "Penny", "Bernardette", "Amy", "Raj", "Kripke"}
+int prioridades =  { {1, 1, 0, 1, 1, 1, 1, 1}, //Sheldon
+                     {0, 1, 1, 1, 1, 1, 1, 1}, //Howard
+                     {1, 0, 1, 1, 1, 1, 1, 1}, //Leonard
+                     {0, 0, 0, 1, 1, 1, 1, 1}, //Stuart
+                     {0, 0, 0, 0, 0, 0, 0, 1}, //Amy
+                     {0, 0, 0, 0, 0, 0, 0, 1}, //Bernadette
+                     {0, 0, 0, 0, 0, 0, 0, 1}, //Raj
+                     {0, 0, 0, 0, 0, 0, 0, 1}, //Penny
+                     {0, 0, 0, 0, 0, 0, 0, 0}, //Kripke
+                     };
+                     
+int parceiros = {   {0,4}, //Sheldon & Amy
+                    {1,5}, //Howard & Bernadette
+                    {2,7}, //Leonard & Penny
+                };
 //mutex 
 pthread_mutex_t lock[5];
 
@@ -24,6 +41,8 @@ int sum; /* esses dados são compartilhados pelo(s) thread(s) */
 typedef struct Pessoa_t{
     int espera;
     char nome[20];
+    Node_heap_t* node_heap;
+    Pessoa_t* parceiro;
 } Pessoa_t;
 
 typedef struct Forno_t{
@@ -114,9 +133,6 @@ int sum; /* esses dados são compartilhados pelo(s) thread(s) */
 int main(int argc, char *argv[])
 {
 
-    pthread_t tid[5]; /* o identificador do thread */
-    pthread_attr_t attr[5]; /* conjunto de atributos do thread */
-
     if (argc != 2) {
         fprintf(stderr,"usage: a.out <integer value>\n");
         return -1;
@@ -126,10 +142,16 @@ int main(int argc, char *argv[])
         fprintf(stderr,"%d must be >= 0\n",atoi(argv[1]));
         return -1;
     }
+    int num_vezes_forno = atoi(argv[1]);
+    
+    pthread_t tid[5]; /* o identificador do thread */
+    pthread_attr_t attr[5]; /* conjunto de atributos do thread */
+    
     Pessoa_t pessoas[10];
-    char nomes_pessoas = {"Raj", "Leonard", "Sheldon", "Howard", "Amy", "Penny",
-                            "Bernardette", "Stuart"}
-                            
+
+    for (int i=0; i<10; i++){
+        pessoas[i].nome = nomes_pessoas[i];
+    }                        
 	//initialization
 	for (int i; i < 5; i++)
 	{

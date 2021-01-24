@@ -15,7 +15,9 @@
 			"string": "c",
 			"unordered_map": "c",
 			"vector": "c",
-			"array": "c"
+			"array": "c",
+			"string_view": "c",
+			"random": "c"
 		}
 	}
 }

@@ -3,18 +3,25 @@
 #ifndef HEAP_C
 #define HEAP_C
 #include "heap.h"
-
+typedef enum bool {false, true} bool;
 int size = 0;
 
 typedef struct Nodes_heap_t {
     int i; // priority id
     void * object_data_ptr;
+    Node_heap_t* self;
+    bool comparison(Node_heap_t *a, Node_heap_t *b);
 }Node_heap_t;
 
 void swap(Node_heap_t **a, Node_heap_t **b) {
   Node_heap_t* temp = *b;
   *b = *a;
   *a = temp;
+}
+
+
+bool comparison(Node_heap_t *a, Node_heap_t *b) {
+return  a->i > b->i;
 }
 
 // Function to heapify the tree
@@ -54,10 +61,10 @@ void insert(Node_heap_t* heap[], Node_heap_t* newNum) {
 }
 
 // Function to delete an element from the tree
-void deleteRoot(Node_heap_t* heap[], Node_heap_t* num) {
+void deleteRoot(Node_heap_t* heap[], Node_heap_t* item) {
   int i;
   for (i = 0; i < size; i++) {
-    if (num->i == heap[i]->i)
+    if (item->i == heap[i]->i)
       break;
   }
 
@@ -78,26 +85,26 @@ void printheap(Node_heap_t* heap[], int size) {
 // Driver code
 int main() {
   Node_heap_t* heap[10];
-  Node_heap_t* objects = (Node_heap_t*) calloc(10,sizeof(objects));
+  Node_heap_t* items = (Node_heap_t*) calloc(10,sizeof(items));
   for (int i=0; i<10; i++){
-    objects[i].i=i;
+    items[i].i=i;
   }
-  insert(heap, &objects[3]);
-  insert(heap, &objects[4]);
-  insert(heap, &objects[9]);
-  insert(heap, &objects[5]);
-  insert(heap, &objects[2]);
+  insert(heap, &items[3]);
+  insert(heap, &items[4]);
+  insert(heap, &items[9]);
+  insert(heap, &items[5]);
+  insert(heap, &items[2]);
 
   printf("Max-Heap heap: ");
   printheap(heap, size);
 
-  deleteRoot(heap, &objects[5]);
+  deleteRoot(heap, &items[5]);
 
   printf("After deleting an element: ");
 
   printheap(heap, size);
   
-    deleteRoot(heap, &objects[9]);
+    deleteRoot(heap, &items[9]);
 
   printf("After deleting an element: ");
 
