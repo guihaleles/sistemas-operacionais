@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
+#include "TP1.h"
 
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
@@ -47,36 +45,34 @@ void *runner(void *param)
 
 
 
-void monitor_microwave()
+void monitor_microwave(Pessoa_t pessoa)
 {
-... // variáveis compartilhadas, variáveis de condição
-esperar(personagem pessoa) {
-printf("%s quer usar o Forno_t\n", nome(b.num));
-... // verifica quem mais quer usar, contadores, variáveis de cond., etc.
+
+// ...
+ // variáveis compartilhadas, variáveis de condição
+esperar(pessoa);
+printf("%s quer usar o Forno_t\n", pessoa.nome);
+
+// ...
+ // verifica quem mais quer usar, contadores, variáveis de cond., etc.
 }
 
 
-void liberar(personagem pessoa) {
-printf("%s vai comer\n", nome(b.num));
-... // verifica se tem que liberar alguém, atualiza contadores, etc.
+void liberar(Pessoa_t pessoa, Forno_t forno) {
+printf("%s vai comer\n", pessoa.nome);
+
+// ...
+ // verifica se tem que liberar alguém, atualiza contadores, etc.
 }
 
 
-verificar() {
-... // Raj verifica se há deadlock e corrige-o
+void verificar() {
+
+// ...
+ // Raj verifica se há deadlock e corrige-o
 }
-
-
-typedef struct Pessoa_t
-{
-};
-
-typedef struct Forno_t
-{
-};
 
 void esperar(Pessoa_t pessoa){
-    drand48()
 }
 
 void esquentar(Pessoa_t pessoa){ /* não exige exclusão mútua */
@@ -85,7 +81,7 @@ void esquentar(Pessoa_t pessoa){ /* não exige exclusão mútua */
 
 
 void liberar(Pessoa_t pessoa, Forno_t forno){
-    
+    forno.liberado = true;
 }
 
 
@@ -93,7 +89,17 @@ void comer(Pessoa_t pessoa){ // espera um certo tempo aleatório
     
 }
 
-void acao(Pessoa_t pessoa){
+void acao(Pessoa_t pessoa, Forno_t forno){
     sleep(5);
-    verificar(Forno_t);
+    verificar(forno);
+}
+
+
+int rand_int(){
+    int ret;
+    if (DETERMINISTIC == false)
+        ret = (int) 100*drand48();
+    else 
+        ret= 2;
+    return ret;
 }
