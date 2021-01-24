@@ -17,7 +17,17 @@
 			"vector": "c",
 			"array": "c",
 			"string_view": "c",
-			"random": "c"
+			"random": "c",
+			"memory": "c",
+			"optional": "c",
+			"fstream": "c",
+			"istream": "c",
+			"ostream": "c",
+			"sstream": "c",
+			"streambuf": "c",
+			"functional": "c",
+			"tuple": "c",
+			"typeinfo": "c"
 		}
 	}
 }
