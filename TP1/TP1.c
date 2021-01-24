@@ -1,17 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include "TP1.h"
 
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
 
 int sum; /* esses dados são compartilhados pelo(s) thread(s) */
 void *runner(void *param); /* os threads chamam essa função */
+
+
 int main(int argc, char *argv[])
 {
 
     pthread_t tid; /* o identificador do thread */
     pthread_attr_t attr; /* conjunto de atributos do thread */
+
+    printf("%s", characters[1].name);
 
     if (argc != 2) {
         fprintf(stderr,"usage: a.out <integer value>\n");
@@ -43,3 +48,19 @@ void *runner(void *param)
         sum += i;
     pthread_exit(0);
 }
+
+void microWaveMonitor()
+{
+    // ... // variáveis compartilhadas, variáveis de condição
+    esperar(Character p) {
+    printf("%s quer usar o forno\n", nome(b.num));
+    // ... // verifica quem mais quer usar, contadores, variáveis de cond., etc.
+    }
+    liberar(personagem p) {
+    printf("%s vai comer\n", nome(b.num));
+    // ... // verifica se tem que liberar alguém, atualiza contadores, etc.
+    }
+    verificar() {
+    // ... // Raj verifica se há deadlock e corrige-o
+    }
+};
