@@ -1,12 +1,13 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": "TP1"
 		}
 	],
 	"settings": {
 		"files.associations": {
-			"tp1.h": "c"
+			"tp1.h": "c",
+			"stdio.h": "c"
 		}
 	}
 }
