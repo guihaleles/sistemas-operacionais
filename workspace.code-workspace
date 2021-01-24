@@ -7,7 +7,15 @@
 	"settings": {
 		"files.associations": {
 			"tp1.h": "c",
-			"stdio.h": "c"
+			"stdio.h": "c",
+			"queue.h": "c",
+			"heap.h": "c",
+			"*.tcc": "c",
+			"deque": "c",
+			"string": "c",
+			"unordered_map": "c",
+			"vector": "c",
+			"array": "c"
 		}
 	}
 }

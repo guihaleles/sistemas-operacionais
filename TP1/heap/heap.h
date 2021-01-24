@@ -1,23 +1,8 @@
 #ifndef HEAP
 #define HEAP
 
-
-
-
 #include <stdio.h>
+#include <stdlib.h>
 
-void swap(int *a, int *b);
-
-// Function to heapify the tree
-void heapify(int array[], int size, int i) ;
-
-// Function to insert an element into the tree
-void insert(int array[], int newNum) ;
-
-// Function to delete an element from the tree
-void deleteRoot(int array[], int num);
-
-// Print the array
-void printArray(int array[], int size) ;
-
+#include "heap.c"
 #endif

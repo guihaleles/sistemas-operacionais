@@ -1,18 +1,24 @@
  
-//Fila de prioridade utilizando heap, fonte: sedgwick
-
+//Fila de prioridade utilizando heap, adaptado de  sedgwick
+#ifndef HEAP_C
+#define HEAP_C
 #include "heap.h"
 
 int size = 0;
 
-void swap(int *a, int *b) {
-  int temp = *b;
+typedef struct Nodes_heap_t {
+    int i; // priority id
+    void * object_data_ptr;
+}Node_heap_t;
+
+void swap(Node_heap_t **a, Node_heap_t **b) {
+  Node_heap_t* temp = *b;
   *b = *a;
   *a = temp;
 }
 
 // Function to heapify the tree
-void heapify(int array[], int size, int i) {
+void heapify(Node_heap_t* heap[], int size, int i) {
   if (size == 1) {
     printf("Single element in the heap");
   } else {
@@ -20,80 +26,85 @@ void heapify(int array[], int size, int i) {
     int largest = i;
     int l = 2 * i + 1;
     int r = 2 * i + 2;
-    if (l < size && array[l] > array[largest])
+    if (l < size && heap[l]->i > heap[largest]->i)
       largest = l;
-    if (r < size && array[r] > array[largest])
+    if (r < size && heap[r]->i > heap[largest]->i)
       largest = r;
 
     // Swap and continue heapifying if root is not largest
     if (largest != i) {
-      swap(&array[i], &array[largest]);
-      heapify(array, size, largest);
+      swap(&heap[i], &heap[largest]);
+      heapify(heap, size, largest);
     }
   }
 }
 
 // Function to insert an element into the tree
-void insert(int array[], int newNum) {
+void insert(Node_heap_t* heap[], Node_heap_t* newNum) {
   if (size == 0) {
-    array[0] = newNum;
+    heap[0] = newNum;
     size += 1;
   } else {
-    array[size] = newNum;
+    heap[size] = newNum;
     size += 1;
     for (int i = size / 2 - 1; i >= 0; i--) {
-      heapify(array, size, i);
+      heapify(heap, size, i);
     }
   }
 }
 
 // Function to delete an element from the tree
-void deleteRoot(int array[], int num) {
+void deleteRoot(Node_heap_t* heap[], Node_heap_t* num) {
   int i;
   for (i = 0; i < size; i++) {
-    if (num == array[i])
+    if (num->i == heap[i]->i)
       break;
   }
 
-  swap(&array[i], &array[size - 1]);
+  swap(&heap[i], &heap[size - 1]);
   size -= 1;
   for (int i = size / 2 - 1; i >= 0; i--) {
-    heapify(array, size, i);
+    heapify(heap, size, i);
   }
 }
 
-// Print the array
-void printArray(int array[], int size) {
+// Print the heap
+void printheap(Node_heap_t* heap[], int size) {
   for (int i = 0; i < size; ++i)
-    printf("%d ", array[i]);
+    printf("%d ", heap[i]->i);
   printf("\n");
 }
 
 // Driver code
 int main() {
-  int array[10];
+  Node_heap_t* heap[10];
+  Node_heap_t* objects = (Node_heap_t*) calloc(10,sizeof(objects));
+  for (int i=0; i<10; i++){
+    objects[i].i=i;
+  }
+  insert(heap, &objects[3]);
+  insert(heap, &objects[4]);
+  insert(heap, &objects[9]);
+  insert(heap, &objects[5]);
+  insert(heap, &objects[2]);
 
-  insert(array, 3);
-  insert(array, 4);
-  insert(array, 9);
-  insert(array, 5);
-  insert(array, 2);
+  printf("Max-Heap heap: ");
+  printheap(heap, size);
 
-  printf("Max-Heap array: ");
-  printArray(array, size);
-
-  deleteRoot(array, 5);
+  deleteRoot(heap, &objects[5]);
 
   printf("After deleting an element: ");
 
-  printArray(array, size);
+  printheap(heap, size);
   
-    deleteRoot(array, 9);
+    deleteRoot(heap, &objects[9]);
 
   printf("After deleting an element: ");
 
-  printArray(array, size);
+  printheap(heap, size);
   
   
   return 0;
 }
+
+#endif
