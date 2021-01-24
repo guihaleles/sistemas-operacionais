@@ -8,9 +8,9 @@
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
 
-//Matrix de prioridades:
-char nomes_pessoas = {"Sheldon", "Howard", "Leonard", "Stuart", "Penny", "Bernardette", "Amy", "Raj", "Kripke"}
-int prioridades =  { {1, 1, 0, 1, 1, 1, 1, 1}, //Sheldon
+//Matrix de priorities:
+char names_persons = {"Sheldon", "Howard", "Leonard", "Stuart", "Penny", "Bernardette", "Amy", "Raj", "Kripke"}
+int priorities =  { {1, 1, 0, 1, 1, 1, 1, 1}, //Sheldon
                      {0, 1, 1, 1, 1, 1, 1, 1}, //Howard
                      {1, 0, 1, 1, 1, 1, 1, 1}, //Leonard
                      {0, 0, 0, 1, 1, 1, 1, 1}, //Stuart
@@ -18,13 +18,47 @@ int prioridades =  { {1, 1, 0, 1, 1, 1, 1, 1}, //Sheldon
                      {0, 0, 0, 0, 0, 0, 0, 1}, //Bernadette
                      {0, 0, 0, 0, 0, 0, 0, 1}, //Raj
                      {0, 0, 0, 0, 0, 0, 0, 1}, //Penny
-                     {0, 0, 0, 0, 0, 0, 0, 0}, //Kripke
+                     {0, 0, 0, 0, 0, 0, 0, 0} //Kripke
                      };
                      
-int parceiros = {   {0,4}, //Sheldon & Amy
-                    {1,5}, //Howard & Bernadette
-                    {2,7}, //Leonard & Penny
+int partners = {   4, //Sheldon & Amy
+                    5, //Howard & Bernadette
+                    7, //Leonard & Penny
+                    -1, //Stuart
+                    7, //Amy & Sheldon
+                    7, //Bernadette & Howard
+                    -1, //Raj
+                    7, //Penny & Leonard
+                    -1 //Kripke
                 };
+bool comparison(Node_heap_t *a, Node_heap_t *b) {
+    if   (a->data.priority > b->data.priority)
+        return true;
+    else if(a->data.priority = b->data.priority){
+        if (a->data.precedencia[b->data.id] > b->data.precedencia[a->data.id]){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+}                
+void init_persons(Pessoa_t ** persons){
+        for (int i=0; i<10; i++){
+        persons[i].id = i;    
+        persons[i].name = names_persons[i];
+        persons[i].idx_partner = partners[i];
+        persons[i].partner = persons[partners[i]];
+        persons[i].priority_node = (Node_heap_t*) malloc(sizeof(Node_heap_t));
+        int priority =0;
+        for (int j =0, j<num_persons, j++)
+            priority+=priorities[i][j];
+        persons[i].priority_node.data = persons[i];
+        persons[i].priority_node.comparison = comparison;
+        persons[i].priority_node->i = priority;
+        persons[i].precedencias=priorities[i];
+    }  
+}
 //mutex 
 pthread_mutex_t lock[5];
 
@@ -40,9 +74,9 @@ int sum; /* esses dados são compartilhados pelo(s) thread(s) */
 
 typedef struct Pessoa_t{
     int espera;
-    char nome[20];
+    char name[20];
     Node_heap_t* node_heap;
-    Pessoa_t* parceiro;
+    Pessoa_t* partner;
 } Pessoa_t;
 
 typedef struct Forno_t{
@@ -69,7 +103,7 @@ void monitor_microwave(Pessoa_t pessoa)
 // ...
  // variáveis compartilhadas, variáveis de condição
 esperar(pessoa);
-printf("%s quer usar o Forno_t\n", pessoa.nome);
+printf("%s quer usar o Forno_t\n", pessoa.name);
 
 // ...
  // verifica quem mais quer usar, contadores, variáveis de cond., etc.
@@ -77,7 +111,7 @@ printf("%s quer usar o Forno_t\n", pessoa.nome);
 
 
 void liberar(Pessoa_t pessoa, Forno_t forno) {
-printf("%s vai comer\n", pessoa.nome);
+printf("%s vai comer\n", pessoa.name);
 
 // ...
  // verifica se tem que liberar alguém, atualiza contadores, etc.
@@ -147,11 +181,10 @@ int main(int argc, char *argv[])
     pthread_t tid[5]; /* o identificador do thread */
     pthread_attr_t attr[5]; /* conjunto de atributos do thread */
     
-    Pessoa_t pessoas[10];
-
-    for (int i=0; i<10; i++){
-        pessoas[i].nome = nomes_pessoas[i];
-    }                        
+    Pessoa_t persons[9];
+    init_perssoas(&persons);
+    
+                      
 	//initialization
 	for (int i; i < 5; i++)
 	{

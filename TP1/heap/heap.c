@@ -8,7 +8,7 @@ int size = 0;
 
 typedef struct Nodes_heap_t {
     int i; // priority id
-    void * object_data_ptr;
+    void * data;
     Node_heap_t* self;
     bool comparison(Node_heap_t *a, Node_heap_t *b);
 }Node_heap_t;
