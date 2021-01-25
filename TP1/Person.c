@@ -23,6 +23,8 @@ typedef struct Person_t
         idx_partner;
     Node_heap_t *priority_node;
     int *precedences;
+    int numberOfUses;
+    bool released;
 } Person_t;
 
 // Priorities Matrix:
@@ -69,11 +71,13 @@ bool person_comparison(Node_heap_t *a, Node_heap_t *b)
 
     return false;
 }
-void init_persons(Person_t persons[])
+void init_persons(Person_t persons[], int numberOfUses)
 {
     for (int i = 0; i < num_persons; i++)
     {
         persons[i].id = i;
+        persons[i].numberOfUses = numberOfUses;
+        persons[i].released = false;
         strcpy(persons[i].name, persons_names[i]);
         persons[i].idx_partner = partners[i];
         persons[i].partner = &persons[partners[i]];
@@ -86,6 +90,7 @@ void init_persons(Person_t persons[])
         persons[i].priority_node->data = (Person_t*)(&persons[i]);
         persons[i].priority_node->comparison = person_comparison;
         persons[i].priority_node->i = priority;
+        
     }
 }
 void enqueue_person(Node_heap_t* heap[], Person_t* person) {  
@@ -133,7 +138,7 @@ int test(int argc, char *argv[])
         heap[i]=NULL;
     
     Person_t *persons = (Person_t*) calloc(num_persons,sizeof(Person_t));
-    init_persons(persons);
+    init_persons(persons, 5);
     print_persons(persons);
     print_queue(heap, num_persons);
     enqueue_person(heap, &persons[4]);

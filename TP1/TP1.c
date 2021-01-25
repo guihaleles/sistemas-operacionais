@@ -5,16 +5,16 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "heap/heap.h"
-#define num_persons 8
+#include "Person.c"
+#define num_persons 2
 
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
 //mutex 
-pthread_mutex_t lock[5];
+pthread_mutex_t lock[num_persons];
+pthread_cond_t cond_var[num_persons];
 
 #define DETERMINISTIC true
-
-int sum; /* esses dados são compartilhados pelo(s) thread(s) */
 
 
 typedef struct Forno_t{
@@ -22,58 +22,70 @@ typedef struct Forno_t{
     bool liberado;
 } Forno_t;
 
-                
-/* O thread assumirá o controle nessa função */
-void *runner(void *param)  /* os threads chamam essa função */
-{
-    int i, upper = atoi(param);
-    sum = 0;
-    for (i = 1; i <= upper; i++)
-        sum += i;
-    pthread_exit(0);
-}
+Person_t persons[num_persons];
 
-void monitor_microwave(Person_t pessoa)
+void *monitor_microwave(void *arg)
 {
+    int i= (int)arg;
+    Person_t person = persons[i];
 
-// ...
- // variáveis compartilhadas, variáveis de condição
-esperar(pessoa);
-printf("%s quer usar o Forno_t\n", pessoa.name);
+    while(person.numberOfUses >= 1){
+        //do things
+        //Coloca a pessoa na fila
+        wait(person);
+
+        // while (a != b)
+        verify();
+        heatUp(person);
+        release(&person);
+        printf("%d", person.numberOfUses);
+        eat(person);
+
+        // pthread_mutex_unlock(&mutex);
+        
+    }
+
 
 // ...
  // verifica quem mais quer usar, contadores, variáveis de cond., etc.
 }
 
-void liberar(Person_t pessoa, Forno_t forno) {
-printf("%s vai comer\n", pessoa.name);
-forno.liberado = true;
 
+void release(Person_t *person) {
+    pthread_mutex_unlock(&lock);
+    // printf("%d", person.numberOfUses);
+    (person->numberOfUses)--;
+    sleep(1);
 // ...
  // verifica se tem que liberar alguém, atualiza contadores, etc.
 }
 
-void verificar() {
+
+void verify() {
 
 // ...
  // Raj verifica se há deadlock e corrige-o
 }
 
-void esperar(Person_t pessoa){
+void wait(Person_t person){
+    printf("%s quer usar o Forno\n", person.name);
+    //coloca na fila
 }
 
-void esquentar(Person_t pessoa){ /* não exige exclusão mútua */
-    
+void heatUp(Person_t person){
+    if(pthread_mutex_lock(&lock) == 0){
+        printf("%s começa a esquentar algo\n", person.name);
+        sleep(1);
+    }
 }
 
-
-void comer(Person_t pessoa){ // espera um certo tempo aleatório
-    
+void eat(Person_t person){
+    printf("%s vai comer\n", person.name);
 }
 
-void acao(Person_t pessoa, Forno_t forno){
+void action(Person_t person, Forno_t forno){
     sleep(5);
-    verificar(forno);
+    verify(forno);
 }
 
 
@@ -97,6 +109,7 @@ int sum; /* esses dados são compartilhados pelo(s) thread(s) */
 int main(int argc, char *argv[])
 {
 
+
     if (argc != 2) {
         fprintf(stderr,"usage: a.out <integer value>\n");
         return -1;
@@ -106,35 +119,35 @@ int main(int argc, char *argv[])
         fprintf(stderr,"%d must be >= 0\n",atoi(argv[1]));
         return -1;
     }
-    int num_vezes_forno = atoi(argv[1]);
+
+    int numberOfUses = atoi(argv[1]);
+
     
-    pthread_t tid[5]; /* o identificador do thread */
-    pthread_attr_t attr[5]; /* conjunto de atributos do thread */
+    pthread_t tid[num_persons]; /* o identificador do thread */
+    pthread_attr_t attr[num_persons]; /* conjunto de atributos do thread */
+
+    init_persons(&persons, numberOfUses);
     
-    Person_t persons[num_persons];
-    init_persons(&persons);
-    
-                      
+
 	//initialization
-	for (int i; i < 5; i++)
+	for (int i = 0; i < num_persons; i++)
 	{
 		pthread_mutex_init(&lock[i], NULL);
 	}                            
                             
     /* obtém os atributos default */
 
-	//Create thread
-	pthread_t dit[5];
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < num_persons; i++)
 	{
+        fprintf(stderr,"Nome: %s \n",persons[i].name);
         pthread_attr_init(&attr);
-		//pthread_create(&dit[i], NULL, thr, (void *)i);
+		pthread_create(&tid[i], NULL, monitor_microwave, (void *)i);
 	}
 
 	//Recycle thread
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < num_persons; i++)
 	{
-		pthread_join(dit[i], NULL);
+		pthread_join(tid[i], NULL);
 	}
 	//Destruction
 	pthread_exit(NULL);
