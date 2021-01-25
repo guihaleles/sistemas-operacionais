@@ -5,7 +5,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "heap/heap.h"
-#define num_persons 1
+#define num_persons 2
 
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
@@ -18,24 +18,29 @@ pthread_cond_t cond_var[num_persons];
 
 int sum; /* esses dados são compartilhados pelo(s) thread(s) */
 
+// typedef struct Person_t{
+//     int espera;
+//     char *name;
+//     Node_heap_t* node_heap;
+//     struct Person_t* partner;
+//     int priority, id, idx_partner;
+//     Node_heap_t* priority_node;
+//     int *precedences;
+//     int numberOfUses;
+// } Person_t;
+
 typedef struct Person_t{
     int espera;
     char *name;
-    Node_heap_t* node_heap;
-    struct Person_t* partner;
-    int priority, id, idx_partner;
-    Node_heap_t* priority_node;
-    int *precedences;
     int numberOfUses;
 } Person_t;
- 
-
-
 
 typedef struct Forno_t{
     int tempo_restante;
     bool liberado;
 } Forno_t;
+
+Person_t persons[num_persons];
 
 // Priorities Matrix:
 const char persons_names[num_persons][20] = {"Sheldon", "Howard", "Leonard", "Stuart",
@@ -61,52 +66,69 @@ int partners[num_persons] = {    4,  //Sheldon & Amy
                     -1  //Kripke
                 };
                 
-bool person_comparison(Node_heap_t *a, Node_heap_t *b) {
-    Person_t *person_a, *person_b;
-    person_a = (Person_t*) a->data;
-    person_b = (Person_t*) b->data;
+// bool person_comparison(Node_heap_t *a, Node_heap_t *b) {
+//     Person_t *person_a, *person_b;
+//     person_a = (Person_t*) a->data;
+//     person_b = (Person_t*) b->data;
     
-    if   (person_a->priority > person_b->priority)
-        return true;
-    if(
-        (person_b->priority == person_b->priority) && 
-        (person_a->precedences[person_b->id] > person_b->precedences[person_a->id]) 
-    ) return true;
+//     if   (person_a->priority > person_b->priority)
+//         return true;
+//     if(
+//         (person_b->priority == person_b->priority) && 
+//         (person_a->precedences[person_b->id] > person_b->precedences[person_a->id]) 
+//     ) return true;
     
-    return false;
-}                
-void init_persons(Person_t** persons, int numberOfUses){
-        for (int i=0; i<10; i++){
-            persons[i]->id = i;    
-            persons[i]->name = persons_names[i];
-            persons[i]->idx_partner = partners[i];
-            persons[i]->partner = persons[partners[i]];
-            persons[i]->priority_node = (Node_heap_t*) malloc(sizeof(Node_heap_t));
-            int priority = 0;
-            for (int j = 0; j<num_persons; j++)
-                priority+=priorities[i][j];
-            persons[i]->priority_node->data = persons[i];
-            persons[i]->priority_node->comparison = person_comparison;
-            persons[i]->priority_node->i = priority;
-            persons[i]->precedences = priorities[i];
-            persons[i] ->numberOfUses = numberOfUses;
-    }  
+//     return false;
+// } 
+
+// void init_persons(Person_t** persons, int numberOfUses){
+//         fprintf(stderr,"Teste");
+//         for (int i=0; i<num_persons; i++){
+//             persons[i]->id = i;    
+//             persons[i]->name = persons_names[i];
+//             persons[i]->idx_partner = partners[i];
+//             persons[i]->partner = persons[partners[i]];
+//             persons[i]->priority_node = (Node_heap_t*) malloc(sizeof(Node_heap_t));
+//             int priority = 0;
+//             for (int j = 0; j<num_persons; j++){
+//                  priority+=priorities[i][j];
+//             }
+//             persons[i]->priority_node->data = persons[i];
+//             persons[i]->priority_node->comparison = person_comparison;
+//             persons[i]->priority_node->i = priority;
+//             persons[i]->precedences = priorities[i];
+//             persons[i] ->numberOfUses = numberOfUses;
+//     }  p
+// }
+
+void init_persons(Person_t person[num_persons],int numberOfUses){
+    for(int i=0; i<num_persons; i++){
+        person[i].name = persons_names[i];
+        person[i].espera = i;
+        person[i].numberOfUses = numberOfUses;
+        fprintf(stderr,"NomePerson:%s ",persons_names[i]);
+    }    
 }
 
-
-
-void *monitor_microwave(Person_t person)
+void *monitor_microwave(void *arg)
 {
-    fprintf(stderr,"%s",person.name);
+    int i= (int)arg;
+    Person_t person = persons[i];
 
-    while(person.numberOfUses){
+    while(person.numberOfUses >= 1){
         //do things
         //Coloca a pessoa na fila
-        // wait(person);
-        // pthread_mutex_lock(&lock);
+        wait(person);
+
         // while (a != b)
-        //     pthread_cond_wait(&mutex, &cond_var);
+        verify();
+        heatUp(person);
+        release(&person);
+        // printf("%d", person.numberOfUses);
+        eat(person);
+
         // pthread_mutex_unlock(&mutex);
+        
     }
 
 
@@ -115,10 +137,11 @@ void *monitor_microwave(Person_t person)
 }
 
 
-void release(Person_t pessoa, Forno_t forno) {
-printf("%s vai comer\n", pessoa.name);
-forno.liberado = true;
-
+void release(Person_t *person) {
+    pthread_mutex_unlock(&lock);
+    // printf("%d", person.numberOfUses);
+    (person->numberOfUses)--;
+    sleep(1);
 // ...
  // verifica se tem que liberar alguém, atualiza contadores, etc.
 }
@@ -131,15 +154,19 @@ void verify() {
 }
 
 void wait(Person_t person){
-    printf("%s quer usar o Forno_t\n", person.name);
+    printf("%s quer usar o Forno\n", person.name);
+    //coloca na fila
 }
 
-void heatUp(Person_t person){ /* não exige exclusão mútua */
-    
+void heatUp(Person_t person){
+    if(pthread_mutex_lock(&lock) == 0){
+        printf("%s começa a esquentar algo\n", person.name);
+        sleep(1);
+    }
 }
 
-void eat(Person_t person){ // espera um certo tempo aleatório
-    
+void eat(Person_t person){
+    printf("%s vai comer\n", person.name);
 }
 
 void action(Person_t person, Forno_t forno){
@@ -184,17 +211,13 @@ int main(int argc, char *argv[])
     
     pthread_t tid[num_persons]; /* o identificador do thread */
     pthread_attr_t attr[num_persons]; /* conjunto de atributos do thread */
-    fprintf(stderr,"Teste");
-    Person_t persons[num_persons];
+
     init_persons(&persons, numberOfUses);
-
-
     
 
 	//initialization
-	for (int i; i < num_persons; i++)
+	for (int i = 0; i < num_persons; i++)
 	{
-        fprintf(stderr,"Teste:%d ",i);
 		pthread_mutex_init(&lock[i], NULL);
 	}                            
                             
@@ -203,7 +226,7 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < num_persons; i++)
 	{
         pthread_attr_init(&attr);
-		pthread_create(&tid[i], NULL, monitor_microwave, (void *)&persons[i]);
+		pthread_create(&tid[i], NULL, monitor_microwave, (void *)i);
 	}
 
 	//Recycle thread
