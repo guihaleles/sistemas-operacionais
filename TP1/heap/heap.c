@@ -5,6 +5,7 @@
 #include "heap.h"
 #include <stdbool.h>
 int size = 0;
+
 typedef struct Node_heap_t {
     int i; // priority id
     void * data;
@@ -16,7 +17,6 @@ void swap(Node_heap_t **a, Node_heap_t **b) {
   *b = *a;
   *a = temp;
 }
-
 
 bool comparison(Node_heap_t *a, Node_heap_t *b) {
 return  a->i > b->i;
@@ -31,9 +31,9 @@ void heapify(Node_heap_t* heap[], int size, int i) {
     int largest = i;
     int l = 2 * i + 1;
     int r = 2 * i + 2;
-    if (l < size && comparison(heap[l], heap[largest]))
+    if (l < size && heap[i]->comparison(heap[l], heap[largest]))
       largest = l;
-    if (r < size && comparison(heap[r],heap[largest]))
+    if (r < size &&  heap[i]->comparison(heap[r],heap[largest]))
       largest = r;
 
     // Swap and continue heapifying if root is not largest
@@ -59,7 +59,7 @@ void heap_insert(Node_heap_t* heap[], Node_heap_t* item) {
 }
 
 // Function to delete an element from the tree
-void deleteRoot(Node_heap_t* heap[], Node_heap_t* item) {
+Node_heap_t* deleteRoot(Node_heap_t* heap[], Node_heap_t* item) {
   int i;
   for (i = 0; i < size; i++) {
     if (item->i == heap[i]->i)
@@ -67,10 +67,12 @@ void deleteRoot(Node_heap_t* heap[], Node_heap_t* item) {
   }
 
   swap(&heap[i], &heap[size - 1]);
+  heap[size - 1] = NULL;
   size -= 1;
   for (int i = size / 2 - 1; i >= 0; i--) {
     heapify(heap, size, i);
   }
+  return item;
 }
 
 // Print the heap
@@ -102,7 +104,7 @@ int test() {
 
   printheap(heap, size);
   
-    deleteRoot(heap, &items[9]);
+  deleteRoot(heap, &items[9]);
 
   printf("After deleting an element: ");
 
