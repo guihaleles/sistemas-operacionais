@@ -23,6 +23,7 @@ typedef struct Person_t
     Node_heap_t *priority_node;
     int *precedences;
     int numberOfUses;
+    bool released;
 } Person_t;
 
 // Priorities Matrix:
@@ -75,6 +76,7 @@ void init_persons(Person_t persons[], int numberOfUses)
     {
         persons[i].id = i;
         persons[i].numberOfUses = numberOfUses;
+        persons[i].released = false;
         strcpy(persons[i].name, persons_names[i]);
         persons[i].idx_partner = partners[i];
         persons[i].partner = &persons[partners[i]];
