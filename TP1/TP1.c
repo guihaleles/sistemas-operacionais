@@ -12,21 +12,9 @@
 //mutex 
 pthread_mutex_t lock[5];
 
-
 #define DETERMINISTIC true
 
 int sum; /* esses dados são compartilhados pelo(s) thread(s) */
-typedef struct Person_t{
-    int espera;
-    char *name;
-    Node_heap_t* node_heap;
-    struct Person_t* partner;
-    int priority, id, idx_partner;
-    Node_heap_t* priority_node;
-    int *precedences;
-} Person_t;
- 
-
 
 
 typedef struct Forno_t{
@@ -34,62 +22,7 @@ typedef struct Forno_t{
     bool liberado;
 } Forno_t;
 
-// Priorities Matrix:
-const char persons_names[num_persons][20] = {"Sheldon", "Howard", "Leonard", "Stuart",
-                      "Penny", "Bernardette", "Amy", "Kripke"};
-const int priorities[num_persons][num_persons] =  { 
-                                        {1, 1, 0, 1, 1, 1, 1, 1}, //Sheldon    8
-                                        {0, 1, 1, 1, 1, 1, 1, 1}, //Howard     8
-                                        {1, 0, 1, 1, 1, 1, 1, 1}, //Leonard    8
-                                        {0, 0, 0, 1, 1, 1, 1, 1}, //Stuart     5
-                                        {0, 0, 0, 0, 0, 0, 0, 1}, //Amy        1 
-                                        {0, 0, 0, 0, 0, 0, 0, 1}, //Bernadette 1
-                                        {0, 0, 0, 0, 0, 0, 0, 1}, //Penny      1 
-                                        {0, 0, 0, 0, 0, 0, 0, 0} //Kripke      0
-                                };
-                     
-int partners[num_persons] = {    4,  //Sheldon & Amy
-                    5,  //Howard & Bernadette
-                    7,  //Leonard & Penny
-                    -1, //Stuart
-                    0,  //Amy & Sheldon
-                    1,  //Bernadette & Howard
-                    2,  //Penny & Leonard
-                    -1  //Kripke
-                };
                 
-bool person_comparison(Node_heap_t *a, Node_heap_t *b) {
-    Person_t *person_a, *person_b;
-    person_a = (Person_t*) a->data;
-    person_b = (Person_t*) b->data;
-    
-    if   (person_a->priority > person_b->priority)
-        return true;
-    if(
-        (person_b->priority == person_b->priority) && 
-        (person_a->precedences[person_b->id] > person_b->precedences[person_a->id]) 
-    ) return true;
-    
-    return false;
-}                
-void init_persons(Person_t** persons){
-        for (int i=0; i<10; i++){
-            persons[i]->id = i;    
-            persons[i]->name = persons_names[i];
-            persons[i]->idx_partner = partners[i];
-            persons[i]->partner = persons[partners[i]];
-            persons[i]->priority_node = (Node_heap_t*) malloc(sizeof(Node_heap_t));
-            int priority = 0;
-            for (int j = 0; j<num_persons; j++)
-                priority+=priorities[i][j];
-            persons[i]->priority_node->data = persons[i];
-            persons[i]->priority_node->comparison = person_comparison;
-            persons[i]->priority_node->i = priority;
-            persons[i]->precedences = priorities[i];
-    }  
-}
-
-
 /* O thread assumirá o controle nessa função */
 void *runner(void *param)  /* os threads chamam essa função */
 {
@@ -99,7 +32,6 @@ void *runner(void *param)  /* os threads chamam essa função */
         sum += i;
     pthread_exit(0);
 }
-
 
 void monitor_microwave(Person_t pessoa)
 {
@@ -113,7 +45,6 @@ printf("%s quer usar o Forno_t\n", pessoa.name);
  // verifica quem mais quer usar, contadores, variáveis de cond., etc.
 }
 
-
 void liberar(Person_t pessoa, Forno_t forno) {
 printf("%s vai comer\n", pessoa.name);
 forno.liberado = true;
@@ -121,7 +52,6 @@ forno.liberado = true;
 // ...
  // verifica se tem que liberar alguém, atualiza contadores, etc.
 }
-
 
 void verificar() {
 
@@ -135,8 +65,6 @@ void esperar(Person_t pessoa){
 void esquentar(Person_t pessoa){ /* não exige exclusão mútua */
     
 }
-
-
 
 
 void comer(Person_t pessoa){ // espera um certo tempo aleatório

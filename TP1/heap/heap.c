@@ -59,7 +59,7 @@ void heap_insert(Node_heap_t* heap[], Node_heap_t* item) {
 }
 
 // Function to delete an element from the tree
-void deleteRoot(Node_heap_t* heap[], Node_heap_t* item) {
+Node_heap_t* deleteRoot(Node_heap_t* heap[], Node_heap_t* item) {
   int i;
   for (i = 0; i < size; i++) {
     if (item->i == heap[i]->i)
@@ -71,6 +71,7 @@ void deleteRoot(Node_heap_t* heap[], Node_heap_t* item) {
   for (int i = size / 2 - 1; i >= 0; i--) {
     heapify(heap, size, i);
   }
+  return item;
 }
 
 // Print the heap
@@ -102,7 +103,7 @@ int test() {
 
   printheap(heap, size);
   
-    deleteRoot(heap, &items[9]);
+  deleteRoot(heap, &items[9]);
 
   printf("After deleting an element: ");
 
