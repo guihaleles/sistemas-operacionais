@@ -27,7 +27,9 @@
 			"streambuf": "c",
 			"functional": "c",
 			"tuple": "c",
-			"typeinfo": "c"
+			"typeinfo": "c",
+			"initializer_list": "c",
+			"utility": "c"
 		}
 	}
 }
