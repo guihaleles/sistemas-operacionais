@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "heap/heap.h"
+#include "Person.c"
 #define num_persons 2
 
 // Comando que estou usando para compilar:
@@ -113,7 +114,7 @@ void *monitor_microwave(void *arg)
         verify();
         heatUp(person);
         release(&person);
-        // printf("%d", person.numberOfUses);
+        printf("%d", person.numberOfUses);
         eat(person);
 
         // pthread_mutex_unlock(&mutex);
@@ -214,6 +215,7 @@ int main(int argc, char *argv[])
 
 	for (int i = 0; i < num_persons; i++)
 	{
+        fprintf(stderr,"Nome: %s \n",persons[i].name);
         pthread_attr_init(&attr);
 		pthread_create(&tid[i], NULL, monitor_microwave, (void *)i);
 	}
