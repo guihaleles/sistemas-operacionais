@@ -6,15 +6,17 @@
 #include <unistd.h>
 #include "heap/heap.h"
 #include "Person.c"
-#define num_persons 2
+#define num_persons 3
 
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
 //mutex 
-pthread_mutex_t lock[num_persons];
-pthread_cond_t cond_var[num_persons];
+pthread_mutex_t lock;
+pthread_cond_t cond_var;
 
-#define DETERMINISTIC true
+#define DETERMINISTIC false
+
+int nextThread = 0; /* esses dados são compartilhados pelo(s) thread(s) */
 
 
 typedef struct Forno_t{
@@ -28,20 +30,25 @@ void *monitor_microwave(void *arg)
 {
     int i= (int)arg;
     Person_t person = persons[i];
+    sleep(1);
+    while(1){
 
-    while(person.numberOfUses >= 1){
-        //do things
-        //Coloca a pessoa na fila
-        wait(person);
 
-        // while (a != b)
-        verify();
-        heatUp(person);
+        wait(&person, i);
+
+        printf("Working Thread:%d \n",i);
+        if(nextThread == num_persons-1)
+        {            
+            nextThread = 0;
+        }
+
+        else
+        {
+            nextThread++;
+        }
+        printf("Next Thread:%d \n",nextThread);
         release(&person);
-        printf("%d", person.numberOfUses);
-        eat(person);
-
-        // pthread_mutex_unlock(&mutex);
+        sleep(rand_int());
         
     }
 
@@ -52,8 +59,10 @@ void *monitor_microwave(void *arg)
 
 
 void release(Person_t *person) {
+    printf("%s vai comer\n",  person->name);
+    // ver se tem aguem para liberar na fila
+    pthread_cond_signal(&cond_var);
     pthread_mutex_unlock(&lock);
-    // printf("%d", person.numberOfUses);
     (person->numberOfUses)--;
     sleep(1);
 // ...
@@ -67,20 +76,28 @@ void verify() {
  // Raj verifica se há deadlock e corrige-o
 }
 
-void wait(Person_t person){
-    printf("%s quer usar o Forno\n", person.name);
-    //coloca na fila
-}
-
-void heatUp(Person_t person){
-    if(pthread_mutex_lock(&lock) == 0){
-        printf("%s começa a esquentar algo\n", person.name);
-        sleep(1);
+void *raj(){
+    printf("raj\n");
+    for (int i = 0; i < num_persons; i++)
+	{
+        printf("raj %d\n",i);
+        persons[i].released = true;
+        sleep(5);
     }
 }
 
-void eat(Person_t person){
-    printf("%s vai comer\n", person.name);
+void wait(Person_t *person, int i){
+    pthread_mutex_lock(&lock);
+    printf("%s quer usar o Forno\n", person->name);
+    //coloca na fila aqui!
+    while (nextThread != i)
+        {
+            pthread_cond_wait(&cond_var, &lock);
+        }
+}
+
+void heatUp(Person_t *person){
+    printf("%s quer usar o Forno\n", person->name);
 }
 
 void action(Person_t person, Forno_t forno){
@@ -92,20 +109,14 @@ void action(Person_t person, Forno_t forno){
 int rand_int(){
     int ret;
     if (DETERMINISTIC == false)
-        ret = (int) 100*drand48();
+        ret = (int) 5*drand48();
     else 
         ret= 2;
     return ret;
 }
 
-// FIFO
 
 
-// Comando que estou usando para compilar:
-// gcc -pthread -o TP1 TP1.c
-
-int sum; /* esses dados são compartilhados pelo(s) thread(s) */
-//void *runner(void *param); /* os threads chamam essa função */
 int main(int argc, char *argv[])
 {
 
@@ -126,23 +137,25 @@ int main(int argc, char *argv[])
     pthread_t tid[num_persons]; /* o identificador do thread */
     pthread_attr_t attr[num_persons]; /* conjunto de atributos do thread */
 
+    pthread_t tid_raj;
+
     init_persons(&persons, numberOfUses);
+    pthread_cond_init(&cond_var,NULL);
     
 
 	//initialization
-	for (int i = 0; i < num_persons; i++)
-	{
-		pthread_mutex_init(&lock[i], NULL);
-	}                            
-                            
+	pthread_mutex_init(&lock, NULL);
+                           
+                
     /* obtém os atributos default */
 
 	for (int i = 0; i < num_persons; i++)
 	{
-        fprintf(stderr,"Nome: %s \n",persons[i].name);
-        pthread_attr_init(&attr);
 		pthread_create(&tid[i], NULL, monitor_microwave, (void *)i);
+        printf("Thread create:%d \n",i);
 	}
+        
+    // pthread_create(&tid_raj,NULL,raj,NULL);  
 
 	//Recycle thread
 	for (int i = 0; i < num_persons; i++)
