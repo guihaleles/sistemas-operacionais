@@ -33,15 +33,7 @@ void *monitor_microwave(void *arg)
     sleep(1);
     while(1){
 
-        // pthread_mutex_lock(&lock);
-        // printf("Lock Thread:%d \n",i);
-        // //coloca na fila
-        // while (nextThread != i)
-        // {
-        //     printf("Cond Thread:%d ",i);
-        //     printf("/ Next:%d \n",nextThread);
-        //     pthread_cond_wait(&cond_var, &lock);
-        // }
+
         wait(&person, i);
 
         printf("Working Thread:%d \n",i);
@@ -55,8 +47,7 @@ void *monitor_microwave(void *arg)
             nextThread++;
         }
         printf("Next Thread:%d \n",nextThread);
-        pthread_cond_signal(&cond_var);
-        pthread_mutex_unlock(&lock);
+        release(&person);
         sleep(rand_int());
         
     }
@@ -68,9 +59,11 @@ void *monitor_microwave(void *arg)
 
 
 void release(Person_t *person) {
+    printf("%s vai comer\n",  person->name);
+    // ver se tem aguem para liberar na fila
+    pthread_cond_signal(&cond_var);
     pthread_mutex_unlock(&lock);
     (person->numberOfUses)--;
-    person->released = false;
     sleep(1);
 // ...
  // verifica se tem que liberar alguém, atualiza contadores, etc.
@@ -96,20 +89,15 @@ void *raj(){
 void wait(Person_t *person, int i){
     pthread_mutex_lock(&lock);
     printf("%s quer usar o Forno\n", person->name);
+    //coloca na fila aqui!
     while (nextThread != i)
         {
-            // printf("Cond Thread:%d ",i);
-            // printf("/ Next:%d \n",nextThread);
             pthread_cond_wait(&cond_var, &lock);
         }
 }
 
 void heatUp(Person_t *person){
     printf("%s quer usar o Forno\n", person->name);
-}
-
-void eat(Person_t person){
-    printf("%s vai comer\n", person.name);
 }
 
 void action(Person_t person, Forno_t forno){
