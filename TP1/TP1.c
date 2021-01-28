@@ -4,9 +4,8 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
-#include "heap/heap.h"
 #include "Person.c"
-#define num_persons 5
+#define num_persons 2
 
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
@@ -18,13 +17,8 @@ pthread_cond_t cond_var;
 
 int nextThread = 0; /* esses dados são compartilhados pelo(s) thread(s) */
 
-
-typedef struct Forno_t{
-    int tempo_restante;
-    bool liberado;
-} Forno_t;
-
 Person_t persons[num_persons];
+Node_heap_t heap[num_persons];
 
 void *monitor_microwave(void *arg)
 {
@@ -33,12 +27,13 @@ void *monitor_microwave(void *arg)
     
     while(person.numberOfUses >= 1){
 
+        printf("wait");
         wait(&person, i);
 
         generateNext(i);
- 
+        printf("heatUp");
         heatUp(&person);
-
+        printf("eat");
         eat(&person);
 
         work(&person);        
@@ -48,6 +43,8 @@ void *monitor_microwave(void *arg)
 
 void eat(Person_t *person) {
     // ver se tem aguem para liberar na fila
+    // Person_t *p = dequeue_person(&heap);
+    nextThread = (int)p->id;
     pthread_cond_signal(&cond_var);
     pthread_mutex_unlock(&lock);
     (person->numberOfUses)--;
@@ -87,7 +84,6 @@ void *raj(){
 void wait(Person_t *person, int i){
     pthread_mutex_lock(&lock);
     printf("%s quer usar o Forno\n", person->name);
-    //coloca na fila aqui!
     while (nextThread != i)
     {
         pthread_cond_wait(&cond_var, &lock);

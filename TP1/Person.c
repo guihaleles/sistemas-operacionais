@@ -24,7 +24,7 @@ typedef struct Person_t
     Node_heap_t *priority_node;
     int *precedences;
     int numberOfUses;
-    bool released;
+    bool inTheQueue;
 } Person_t;
 
 // Priorities Matrix:
@@ -77,7 +77,7 @@ void init_persons(Person_t persons[], int numberOfUses)
     {
         persons[i].id = i;
         persons[i].numberOfUses = numberOfUses;
-        persons[i].released = false;
+        persons[i].inTheQueue = false;
         strcpy(persons[i].name, persons_names[i]);
         persons[i].idx_partner = partners[i];
         persons[i].partner = &persons[partners[i]];
@@ -130,45 +130,45 @@ bool check_deadlock(Node_heap_t* heap[]){
             return true;
     return false;    
 }
-int test(int argc, char *argv[])
-{
-    //int h_size = 0;
-    Node_heap_t *heap[10];
-    for (int i=0; i<num_persons; i++)
-        heap[i]=NULL;
+// int test(int argc, char *argv[])
+// {
+//     //int h_size = 0;
+//     Node_heap_t *heap[10];
+//     for (int i=0; i<num_persons; i++)
+//         heap[i]=NULL;
     
-    Person_t *persons = (Person_t*) calloc(num_persons,sizeof(Person_t));
-    init_persons(persons, 5);
-    print_persons(persons);
-    print_queue(heap, num_persons);
-    enqueue_person(heap, &persons[4]);
-    print_queue(heap, num_persons);
-    enqueue_person(heap, &persons[3]);
-    print_queue(heap, num_persons);
-    enqueue_person(heap, &persons[2]);
-    print_queue(heap, num_persons);
-    enqueue_person(heap, &persons[1]);
-    print_queue(heap, num_persons);
-     enqueue_person(heap, &persons[5]);
-    print_queue(heap, num_persons);
-    if (check_deadlock(heap))
-        printf("Deadlock!!!\n");
-    enqueue_person(heap, &persons[0]);
-    print_queue(heap, num_persons);
-    Person_t *p = queue_first(heap); 
-    printf("Max-Heap heap: %s \n", p->name );
-    if (check_deadlock(heap))
-        printf("Deadlock!!!\n");
-    p = dequeue_person(heap);
-    printf("Dequeue: %s \n", p->name );
-    if (check_deadlock(heap))
-        printf("Deadlock!!!\n");
-    print_queue(heap, num_persons);
-    p = dequeue_person(heap);
-    printf("Dequeue: %s \n", p->name );
-    print_queue(heap, num_persons);
-    printf("\nDone \n");
-    return 0;
-}
+//     Person_t *persons = (Person_t*) calloc(num_persons,sizeof(Person_t));
+//     init_persons(persons, 5);
+//     print_persons(persons);
+//     print_queue(heap, num_persons);
+//     enqueue_person(heap, &persons[4]);
+//     print_queue(heap, num_persons);
+//     enqueue_person(heap, &persons[3]);
+//     print_queue(heap, num_persons);
+//     enqueue_person(heap, &persons[2]);
+//     print_queue(heap, num_persons);
+//     enqueue_person(heap, &persons[1]);
+//     print_queue(heap, num_persons);
+//      enqueue_person(heap, &persons[5]);
+//     print_queue(heap, num_persons);
+//     if (check_deadlock(heap))
+//         printf("Deadlock!!!\n");
+//     enqueue_person(heap, &persons[0]);
+//     print_queue(heap, num_persons);
+//     Person_t *p = queue_first(heap); 
+//     printf("Max-Heap heap: %s \n", p->name );
+//     if (check_deadlock(heap))
+//         printf("Deadlock!!!\n");
+//     p = dequeue_person(heap);
+//     printf("Dequeue: %s \n", p->name );
+//     if (check_deadlock(heap))
+//         printf("Deadlock!!!\n");
+//     print_queue(heap, num_persons);
+//     p = dequeue_person(heap);
+//     printf("Dequeue: %s \n", p->name );
+//     print_queue(heap, num_persons);
+//     printf("\nDone \n");
+//     return 0;
+// }
 
 #endif
