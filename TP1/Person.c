@@ -8,8 +8,9 @@
 #include <unistd.h>
 #include <string.h>
 #include "heap/heap.h"
-#define num_persons 8
 
+#define num_persons 8
+#define get_person(x) ((Person_t*)x->data)
 #define DETERMINISTIC true
 
 int sum; /* esses dados são compartilhados pelo(s) thread(s) */
@@ -96,17 +97,16 @@ void enqueue_person(Node_heap_t* heap[], Person_t* person) {
     heap_insert(heap, person->priority_node);
 }
 
-Person_t*  dequeue_person(Node_heap_t* heap[], Person_t* person) {
-    deleteRoot(heap, person->priority_node);
-    return person;
+Person_t*  dequeue_person(Node_heap_t* heap[]) {
+    return ( Person_t*)deleteRoot(heap, heap[0])->data;
 }
 
 Person_t* queue_first(Node_heap_t* heap[]) {
     return ((Person_t*)(heap[0]->data));
 }
 // Print the heap
-void print_queue(Node_heap_t* heap[], int size) {
-  for (int i = 0; i < size; ++i)
+void print_queue(Node_heap_t* heap[], int h_size) {
+  for (int i = 0; i < h_size; ++i)
     if (heap[i] != NULL)
         printf("%s: %d ", ((Person_t*)(heap[i]->data))->name, 
         ((Person_t*)(heap[i]->data))->priority);
@@ -114,12 +114,23 @@ void print_queue(Node_heap_t* heap[], int size) {
 }
 
 void print_persons(Person_t persons[]) {
-  for (int i = 0; i < size; i++)
+  for (int i = 0; i < h_size; i++)
         printf("%s: %d ", persons[i].name, persons[i].priority);
   printf("\n");
 }
-
-int teste(int argc, char *argv[])
+bool check_deadlock(Node_heap_t* heap[]){
+    //Return true if there is a deadlock
+    int ids_before[h_size];
+    for(int i=0; i<h_size;i++)
+        ids_before[i] = get_person(heap[i])->id;
+    for (int i = h_size / 2 - 1; i >= 0; i--)
+        heapify(heap, h_size, i);
+    for(int i=0; i<h_size;i++)
+        if (ids_before[i] != get_person(heap[i])->id)
+            return true;
+    return false;    
+}
+int test(int argc, char *argv[])
 {
     //int h_size = 0;
     Node_heap_t *heap[10];
@@ -138,15 +149,25 @@ int teste(int argc, char *argv[])
     print_queue(heap, num_persons);
     enqueue_person(heap, &persons[1]);
     print_queue(heap, num_persons);
+     enqueue_person(heap, &persons[5]);
+    print_queue(heap, num_persons);
+    if (check_deadlock(heap))
+        printf("Deadlock!!!\n");
     enqueue_person(heap, &persons[0]);
     print_queue(heap, num_persons);
     Person_t *p = queue_first(heap); 
     printf("Max-Heap heap: %s \n", p->name );
-    dequeue_person(heap, &persons[3]);
+    if (check_deadlock(heap))
+        printf("Deadlock!!!\n");
+    p = dequeue_person(heap);
+    printf("Dequeue: %s \n", p->name );
+    if (check_deadlock(heap))
+        printf("Deadlock!!!\n");
     print_queue(heap, num_persons);
-    dequeue_person(heap, &persons[4]);
+    p = dequeue_person(heap);
+    printf("Dequeue: %s \n", p->name );
     print_queue(heap, num_persons);
-     printf("\nDone \n");
+    printf("\nDone \n");
     return 0;
 }
 
