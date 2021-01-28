@@ -6,8 +6,7 @@
 #include <unistd.h>
 #include "heap/heap.h"
 #include "Person.c"
-#define num_persons 5
-
+#define num_persons 1
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
 //mutex 
@@ -30,7 +29,7 @@ void *monitor_microwave(void *arg)
 {
     int i= (int)arg;
     Person_t person = persons[i];
-    
+    //pthread_cond_t
     while(person.numberOfUses >= 1){
 
         wait(&person, i);

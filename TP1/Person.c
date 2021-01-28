@@ -12,6 +12,7 @@
 #define num_persons 8
 #define get_person(x) ((Person_t*)x->data)
 #define DETERMINISTIC true
+typedef enum {WANT_COOK, COOKING, EATING, WORKING } State_t;
 
 int sum; /* esses dados são compartilhados pelo(s) thread(s) */
 typedef struct Person_t
@@ -25,6 +26,7 @@ typedef struct Person_t
     int *precedences;
     int numberOfUses;
     bool released;
+    State_t state;
 } Person_t;
 
 // Priorities Matrix:
@@ -54,17 +56,14 @@ int priorities[num_persons][num_persons] = {
 
 bool person_comparison(Node_heap_t *a, Node_heap_t *b)
 {
-    Person_t *person_a, *person_b;
-    person_a = (Person_t *)a->data;
-    person_b = (Person_t *)b->data;
-
-    if (person_a->priority > person_b->priority)
+    
+    if (get_person(a)->priority > get_person(b)->priority)
         return true;
     else{
         
         if (
-            (person_a->priority == person_b->priority) &&
-            (person_a->precedences[person_b->id] > person_b->precedences[person_a->id])
+            (get_person(a)->priority == get_person(b)->priority) &&
+            (get_person(a)->precedences[get_person(b)->id] > get_person(b)->precedences[get_person(a)->id])
         )
             return true;
     }
@@ -90,6 +89,7 @@ void init_persons(Person_t persons[], int numberOfUses)
         persons[i].priority_node->data = (Person_t*)(&persons[i]);
         persons[i].priority_node->comparison = person_comparison;
         persons[i].priority_node->i = priority;
+        persons[i].state = WORKING;
         
     }
 }

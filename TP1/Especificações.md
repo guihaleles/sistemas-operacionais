@@ -55,9 +55,6 @@ Ao longo da execução o programa deve então mostrar mensagens sobre a evoluç�
 
 
 
-Deve ter:  
-==========
-
 Caso de teste:
 =================
 
