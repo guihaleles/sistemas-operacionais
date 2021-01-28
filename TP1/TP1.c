@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include "heap/heap.h"
 #include "Person.c"
-#define num_persons 3
+#define num_persons 5
 
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
@@ -30,51 +30,49 @@ void *monitor_microwave(void *arg)
 {
     int i= (int)arg;
     Person_t person = persons[i];
-    sleep(1);
-    while(1){
-
+    
+    while(person.numberOfUses >= 1){
 
         wait(&person, i);
 
-        printf("Working Thread:%d \n",i);
-        if(nextThread == num_persons-1)
-        {            
-            nextThread = 0;
-        }
+        generateNext(i);
+ 
+        heatUp(&person);
 
-        else
-        {
-            nextThread++;
-        }
-        printf("Next Thread:%d \n",nextThread);
-        release(&person);
-        sleep(rand_int());
-        
+        eat(&person);
+
+        work(&person);        
     }
-
-
-// ...
- // verifica quem mais quer usar, contadores, variáveis de cond., etc.
 }
 
 
-void release(Person_t *person) {
-    printf("%s vai comer\n",  person->name);
+void eat(Person_t *person) {
     // ver se tem aguem para liberar na fila
     pthread_cond_signal(&cond_var);
     pthread_mutex_unlock(&lock);
     (person->numberOfUses)--;
-    sleep(1);
-// ...
- // verifica se tem que liberar alguém, atualiza contadores, etc.
+    printf("%s vai comer\n",  person->name);
+
 }
 
-
-void verify() {
-
-// ...
- // Raj verifica se há deadlock e corrige-o
+generateNext(int i){
+        // printf("Working Thread:%d \n",i);
+        if(nextThread == num_persons-1)
+        {            
+            nextThread = 0;
+        }
+        else
+        {
+            nextThread++;
+        }
+        // printf("Next Thread:%d \n",nextThread);
 }
+
+work(Person_t *person){
+     printf("%s voltou para o trabalho\n",person->name);
+     sleep(rand_int());
+}
+
 
 void *raj(){
     printf("raj\n");
@@ -91,25 +89,20 @@ void wait(Person_t *person, int i){
     printf("%s quer usar o Forno\n", person->name);
     //coloca na fila aqui!
     while (nextThread != i)
-        {
-            pthread_cond_wait(&cond_var, &lock);
-        }
+    {
+        pthread_cond_wait(&cond_var, &lock);
+    }
 }
 
 void heatUp(Person_t *person){
-    printf("%s quer usar o Forno\n", person->name);
+    printf("%s começa a esquentar algo\n", person->name);
+    sleep(1);
 }
-
-void action(Person_t person, Forno_t forno){
-    sleep(5);
-    verify(forno);
-}
-
 
 int rand_int(){
     int ret;
     if (DETERMINISTIC == false)
-        ret = (int) 5*drand48();
+        ret = (int) ((3*drand48())+3);
     else 
         ret= 2;
     return ret;
@@ -119,8 +112,6 @@ int rand_int(){
 
 int main(int argc, char *argv[])
 {
-
-
     if (argc != 2) {
         fprintf(stderr,"usage: a.out <integer value>\n");
         return -1;
