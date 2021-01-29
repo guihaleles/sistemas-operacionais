@@ -26,7 +26,8 @@ void queue(int personId){
     p.personId = personId;
     p.position = position;
     list_t[position] = p;
-    position++;    
+    position++;
+    printList();    
 }
 
 void deQueue(int personId){
@@ -40,12 +41,18 @@ void deQueue(int personId){
             list_t[i] = list_t[i+1];
             list_t[i].position = i;
         }
+        
 
     }
 
     if(find){
         position--;
     }
+    else{
+        printf("Erro ao remover da fila");
+    }
+    printf("Dequeue %d \n",personId);
+    printList();
 }
 
 void printList(){
@@ -108,10 +115,18 @@ int getHighestScoreId(){
         }
         else if(list_t[i].score == highestScore){
             highestScoreId = -1;
+            // printf("Queue:")
+            // printList();
+            // printf("end\n")
         }
     }
 
     return highestScoreId;
+}
+
+getRandon(){
+    int personId = list_t[(int)(position*drand48())].personId;
+    return personId;
 }
 
 

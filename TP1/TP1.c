@@ -12,7 +12,7 @@
 // gcc -pthread -o TP1 TP1.c
 //mutex 
 pthread_mutex_t lock;
-pthread_cond_t cond_var;
+pthread_cond_t cond_var[num_persons];
 
 #define DETERMINISTIC false
 
@@ -35,18 +35,16 @@ int rand_int(){
 
 void eat(Person_t *person) {
     // ver se tem aguem para liberar na fila
-
     deQueue(person->id);
     nextThread = getHighestScoreId();
     pthread_cond_signal(&cond_var);
     pthread_mutex_unlock(&lock);
     (person->numberOfUses)--;
     printf("%s vai comer\n",  person->name);
-
 }
 
 void generateNext(int i){
-        // printf("Working Thread:%d \n",i);
+
         if(nextThread == num_persons-1)
         {            
             nextThread = 0;
@@ -55,7 +53,7 @@ void generateNext(int i){
         {
             nextThread++;
         }
-        // printf("Next Thread:%d \n",nextThread);
+
 }
 
 void work(Person_t *person){
@@ -66,12 +64,18 @@ void work(Person_t *person){
 
 void *raj(){
     printf("raj\n");
+    while(1)
+    {
+        if(nextThread==-1){
+            nextThread = getRandon();
+            pthread_cond_signal(&cond_var[nextThread]);
+            printf("raj %d\n",nextThread);
+            printList();
+        }
 
-    if(nextThread==-1){
-        deQueue((int)(position*drand48()));
+        sleep(5);
     }
-
-    sleep(5);
+    
 }
 
 void wait(Person_t *person, int i){
@@ -83,13 +87,15 @@ void wait(Person_t *person, int i){
     pthread_mutex_lock(&lock);    
     while (nextThread != i)
     {
-        printf("NextThread: %d\n", nextThread);
-        pthread_cond_wait(&cond_var, &lock);
+        pthread_cond_wait(&cond_var[i], &lock);
+        printf("Thread:%d ", i);
+        printf("Next:%d\n",nextThread);
     }
 }
 
 void heatUp(Person_t *person){
     printf("%s começa a esquentar algo\n", person->name);
+    sleep(1);
 }
 
 
@@ -101,7 +107,7 @@ void *monitor_microwave(void *arg)
     while(person.numberOfUses >= 1){        
 
         wait(&person, i);
-        // generateNext(i);
+
         heatUp(&person);
 
         eat(&person);
@@ -126,7 +132,7 @@ int main(int argc, char *argv[])
 
     int numberOfUses = atoi(argv[1]);
 
-    
+
     pthread_t tid[num_persons]; /* o identificador do thread */
     pthread_attr_t attr[num_persons]; /* conjunto de atributos do thread */
 
@@ -157,8 +163,10 @@ int main(int argc, char *argv[])
 	}
 
     pthread_join(&tid_raj,NULL);
-	//Destruction
+    pthread_cond_destroy(&cond_var);
+    pthread_mutex_destroy(&lock);
 	pthread_exit(NULL);
+
 
 	return 0;
 }
