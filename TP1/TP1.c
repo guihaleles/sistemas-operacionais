@@ -5,7 +5,8 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "Person.c"
-#define num_persons 2
+#include "Queue.c"
+#define num_persons 8
 
 // Comando que estou usando para compilar:
 // gcc -pthread -o TP1 TP1.c
@@ -15,36 +16,28 @@ pthread_cond_t cond_var;
 
 #define DETERMINISTIC false
 
-int nextThread = 0; /* esses dados são compartilhados pelo(s) thread(s) */
+int nextThread = -1; /* esses dados são compartilhados pelo(s) thread(s) */
 
 Person_t persons[num_persons];
 Node_heap_t heap[num_persons];
 
-void *monitor_microwave(void *arg)
-{
-    int i= (int)arg;
-    Person_t person = persons[i];
-    
-    while(person.numberOfUses >= 1){
 
-        printf("wait");
-        wait(&person, i);
-
-        generateNext(i);
-        printf("heatUp");
-        heatUp(&person);
-        printf("eat");
-        eat(&person);
-
-        work(&person);        
-    }
+int rand_int(){
+    int ret;
+    if (DETERMINISTIC == false)
+        ret = (int) ((3*drand48())+3);
+    else 
+        ret= 2;
+    return ret;
 }
+
 
 
 void eat(Person_t *person) {
     // ver se tem aguem para liberar na fila
-    // Person_t *p = dequeue_person(&heap);
-    nextThread = (int)p->id;
+
+    deQueue(person->id);
+    nextThread = getHighestScoreId();
     pthread_cond_signal(&cond_var);
     pthread_mutex_unlock(&lock);
     (person->numberOfUses)--;
@@ -52,7 +45,7 @@ void eat(Person_t *person) {
 
 }
 
-generateNext(int i){
+void generateNext(int i){
         // printf("Working Thread:%d \n",i);
         if(nextThread == num_persons-1)
         {            
@@ -65,7 +58,7 @@ generateNext(int i){
         // printf("Next Thread:%d \n",nextThread);
 }
 
-work(Person_t *person){
+void work(Person_t *person){
      printf("%s voltou para o trabalho\n",person->name);
      sleep(rand_int());
 }
@@ -73,35 +66,48 @@ work(Person_t *person){
 
 void *raj(){
     printf("raj\n");
-    for (int i = 0; i < num_persons; i++)
-	{
-        printf("raj %d\n",i);
-        persons[i].released = true;
-        sleep(5);
+
+    if(nextThread==-1){
+        deQueue((int)(position*drand48()));
     }
+
+    sleep(5);
 }
 
 void wait(Person_t *person, int i){
-    pthread_mutex_lock(&lock);
+    
     printf("%s quer usar o Forno\n", person->name);
+
+    queue(i);
+    nextThread = getHighestScoreId();
+    pthread_mutex_lock(&lock);    
     while (nextThread != i)
     {
+        printf("NextThread: %d\n", nextThread);
         pthread_cond_wait(&cond_var, &lock);
     }
 }
 
 void heatUp(Person_t *person){
     printf("%s começa a esquentar algo\n", person->name);
-    sleep(1);
 }
 
-int rand_int(){
-    int ret;
-    if (DETERMINISTIC == false)
-        ret = (int) ((3*drand48())+3);
-    else 
-        ret= 2;
-    return ret;
+
+void *monitor_microwave(void *arg)
+{
+    int i= (int)arg;
+    Person_t person = persons[i];
+    
+    while(person.numberOfUses >= 1){        
+
+        wait(&person, i);
+        // generateNext(i);
+        heatUp(&person);
+
+        eat(&person);
+
+        work(&person);        
+    }
 }
 
 
@@ -142,13 +148,15 @@ int main(int argc, char *argv[])
         printf("Thread create:%d \n",i);
 	}
         
-    // pthread_create(&tid_raj,NULL,raj,NULL);  
+    pthread_create(&tid_raj,NULL,raj,NULL);  
 
 	//Recycle thread
 	for (int i = 0; i < num_persons; i++)
 	{
 		pthread_join(tid[i], NULL);
 	}
+
+    pthread_join(&tid_raj,NULL);
 	//Destruction
 	pthread_exit(NULL);
 

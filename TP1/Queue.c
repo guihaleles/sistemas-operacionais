@@ -55,36 +55,72 @@ void printList(){
     }
 }
 
-int nextToUse(){
-    bool priority;
+bool checkPartnerOnTheList(int id){
+    int partnerId = partners[id];
+    bool partnerExist = false;
+
+    for(int i =0; i<position; i++){
+        if(list_t[i].personId == partnerId)
+            partnerExist = true;
+    }
+    return partnerExist;
+}
+
+void setScore(){
+    int score = 0;
+    int biggest = 0;
     int nextId = -1;
+
     for(int i =0; i<position; i++)
     {   
-        priority = true;    
+        score = 0;
+
+        bool partnerI = checkPartnerOnTheList(list_t[i].personId);
+
+        if(partnerI)
+            score = score + 10;    
+
         for(int j =0; j<position; j++)
-        { 
-           priority =  priority & (bool)prioritiesq[list_t[i].personId][list_t[j].personId];
-           printf("Person ID:%d ",list_t[i].personId);
-           printf("Person2 ID:%d ",list_t[j].personId);
-           printf("Precedence:%d ",prioritiesq[list_t[i].personId][list_t[j].personId]);
-           printf("Priority:%d\n", priority);
+        {
+            bool partnerJ = checkPartnerOnTheList(list_t[j].personId);
+
+            if(partnerI && partnerJ) 
+                score =  score + prioritiesq[list_t[i].personId][list_t[j].personId];
+            else if(!partnerI && !partnerJ)
+                score =  score + prioritiesq[list_t[i].personId][list_t[j].personId];
         }
 
-        if(priority){
-            if(nextId == -1)
-                nextId = list_t[i].personId;
-            else
-                nextId = -1;    
-        }
-            
+        list_t[i].score = score;
+        // printf("Score: %d\n",list_t[i].score);            
     }
-    return nextId;
 }
 
-void main(int argc, char *argv[]){
-    queue(7);
-    queue(1);
-    printList();
-    printf("NextId: %d\n", nextToUse());
+int getHighestScoreId(){
+    setScore();
+    int highestScore = 0;
+    int highestScoreId = -1;
 
+    for(int i =0; i<position; i++){
+        // printf("Score: %d\n",list_t[i].score);
+        if(list_t[i].score > highestScore){
+            highestScore = list_t[i].score;
+            highestScoreId = list_t[i].personId;
+        }
+        else if(list_t[i].score == highestScore){
+            highestScoreId = -1;
+        }
+    }
+
+    return highestScoreId;
 }
+
+
+// void main(int argc, char *argv[]){
+//     queue(2);
+//     queue(1);
+//     queue(0);
+
+//     setScore();
+//     printf("Highest Score Id: %d\n",getHighestScoreId());
+
+// }

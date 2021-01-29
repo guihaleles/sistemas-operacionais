@@ -34,7 +34,7 @@ char persons_names[num_persons][20] = {"Sheldon", "Howard", "Leonard", "Stuart",
 int partners[num_persons] = {
     4,  //Sheldon & Amy
     5,  //Howard & Bernadette
-    7,  //Leonard & Penny
+    6,  //Leonard & Penny
     -1, //Stuart
     0,  //Amy & Sheldon
     1,  //Bernadette & Howard
