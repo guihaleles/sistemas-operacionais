@@ -66,19 +66,30 @@ void work(Person_t *person){
 
 void *thr_raj(){
     printf("raj\n");
-
-    if(nextThread==-1){
-        deQueue((int)(position*drand48()));
+    if(check_deadlock()){
+        //if(first_queue()->has_partner)
+        //    deQueue();
+        //    deQueue();
+        deQueue();
+        if(nextThread==-1){
+            deQueue((int)(position*drand48()));
+        }        
     }
 
     sleep(5);
 }
 
 void wait_to_use_oven(Person_t *person, int i){
-    monitor_queue[i]=true;
+    //monitor_queue[i]=true;
     printf("%s quer usar o Forno\n", person->name);
-    pthread_cond_wait(person->mutex)
-    nextThread = getHighestScoreId();
+    //nextThread = getHighestScoreId();
+    if(!check_deadlock()){
+        cond_oven =True;
+    }
+    else
+        cond_oven =True;
+    //pthread_cond_wait(cond_oven, lock_oven);
+    //pthread_cond_wait(person->mutex);
     pthread_mutex_lock(&lock);    
     while (nextThread != i)
     {
