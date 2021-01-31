@@ -1,8 +1,8 @@
-#ifndef HEAP
-#define HEAP
+#ifndef QUEUE
+#define QUEUE
 
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 
-#include "heap.c"
+#include "queue.c"
 #endif

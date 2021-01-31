@@ -15,7 +15,7 @@ pthread_mutex_t lock;
 pthread_cond_t cond_var;
 
 #define DETERMINISTIC false
-
+int monitor_queue[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 int nextThread = -1; /* esses dados são compartilhados pelo(s) thread(s) */
 
 Person_t persons[num_persons];
@@ -75,7 +75,7 @@ void *thr_raj(){
 }
 
 void wait_to_use_oven(Person_t *person, int i){
-    
+    monitor_queue[i]=true;
     printf("%s quer usar o Forno\n", person->name);
     pthread_cond_wait(person->mutex)
     nextThread = getHighestScoreId();
