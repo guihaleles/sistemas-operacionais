@@ -73,10 +73,8 @@ bool person_comparison(Node_t *a, Node_t *b)
     if (person_a->partner_in_line == person_b->partner_in_line){
         Person_t *precedence_a = person_a;
         Person_t *precedence_b = person_b;
-        if ( person_a->partner_in_line && person_a->is_girlfriend ) 
-            precedence_a = person_a->partner;
-        if ( person_a->partner_in_line && person_b->is_girlfriend )
-             precedence_b = person_b->partner;
+        if ( person_a->is_girlfriend ) precedence_a = person_a->partner;
+        if ( person_b->is_girlfriend ) precedence_b = person_b->partner;
         if(precedence_over(precedence_a,precedence_b) > precedence_over(precedence_b,precedence_a)) // a>b
             return true;
         if (precedence_over(precedence_a,precedence_b) == precedence_over(precedence_b,precedence_a)){
@@ -114,33 +112,23 @@ void init_persons(Person_t persons[], int numberOfUses)
     }
 }
 void enqueue_person(Node_t* heap[], Person_t* person) {  
+    heap_insert(heap, person->priority_node);
     for(int i=0; heap[i] != NULL; i++){
         if (get_person(heap[i]) == person->partner){
             person->partner_in_line = true;
             person->partner->partner_in_line = true;
-            if (get_person(heap[i])->is_girlfriend)
-                heap[i]->data = (void*) person;         
-            printf("Enqueue: %s, partner %s found!\n", person->name, person->partner->name);
         }
     }
-    if (person->partner_in_line == false){   
-        heap_insert(heap, person->priority_node);
-        printf("Enqueue: %s\n", person->name);
-        print_queue(heap, num_persons);
-    }
+    printf("Enqueue: %s\n", person->name);
+    print_queue(heap, num_persons);
 
 }
 
 Person_t*  dequeue_person(Node_t* heap[]) {
     Person_t* person= ( Person_t*)heap[0]->data;
-    if (person->partner->partner_in_line == false){
-        deleteRoot(heap, heap[0]);
-        person->partner->partner_in_line = false;
-    } else{
-        heap[0]->data = ( void*) person->partner;
-        person->partner_in_line = false;
-    }
-    printf("Dequeue %s\n", person->name);
+    person->partner_in_line = false;
+    deleteRoot(heap, heap[0]);
+    printf("Dequeue %s", person->name);
     print_queue(heap, num_persons);
     return person;
     
@@ -154,12 +142,9 @@ Person_t* queue_first(Node_t* heap[]) {
 // Print the heap
 void print_queue(Node_t* heap[], int h_size) {
   for (int i = 0; i < h_size; ++i)
-    if (heap[i] != NULL){
-        printf("%s ", ((Person_t*)(heap[i]->data))->name);
-        if( ((Person_t*)(heap[i]->data))->partner_in_line 
-            && ((Person_t*)(heap[i]->data))->partner->partner_in_line)
-            printf("- %s     ", ((Person_t*)(heap[i]->data))->partner->name);
-    }
+    if (heap[i] != NULL)
+        printf("%s: %d ", ((Person_t*)(heap[i]->data))->name, 
+        ((Person_t*)(heap[i]->data))->priority);
   printf("\n");
 }
 
@@ -213,10 +198,12 @@ int main(int argc, char *argv[])
     enqueue_person(heap, &persons[6]);
     if (check_deadlock(heap))
         printf("Deadlock!!!\n");
-    dequeue_person(heap);
+    printf("Dequeue: %s \n", dequeue_person(heap)->name );
     if (check_deadlock(heap))
         printf("Deadlock!!!\n");
-    dequeue_person(heap);
+    print_queue(heap, num_persons);
+        printf("Dequeue: %s \n", dequeue_person(heap)->name );
+    print_queue(heap, num_persons);
     printf("\nDone \n");
     return 0;
 }

@@ -6,24 +6,24 @@
 #include <stdbool.h>
 int h_size = 0;
 extern int h_size;
-typedef struct Node_heap_t {
+typedef struct Node_t {
     int i; // priority id
     void * data;
-    bool (*comparison)(struct Node_heap_t *a, struct Node_heap_t *b);
-} Node_heap_t;
+    bool (*comparison)(struct Node_t *a, struct Node_t *b);
+} Node_t;
 
-void swap(Node_heap_t **a, Node_heap_t **b) {
-  Node_heap_t* temp = *b;
+void swap(Node_t **a, Node_t **b) {
+  Node_t* temp = *b;
   *b = *a;
   *a = temp;
 }
 
-bool comparison(Node_heap_t *a, Node_heap_t *b) {
+bool comparison(Node_t *a, Node_t *b) {
 return  a->i > b->i;
 }
 
 // Function to heapify the tree
-void heapify(Node_heap_t* heap[], int h_size, int i) {
+void heapify(Node_t* heap[], int h_size, int i) {
   if (h_size == 1) {
     printf("Single element in the heap");
   } else {
@@ -45,7 +45,7 @@ void heapify(Node_heap_t* heap[], int h_size, int i) {
 }
 
 // Function to heap_insert an element into the tree
-void heap_insert(Node_heap_t* heap[], Node_heap_t* item) {
+void heap_insert(Node_t* heap[], Node_t* item) {
   if (h_size == 0) {
     heap[0] = item;
     h_size += 1;
@@ -59,7 +59,7 @@ void heap_insert(Node_heap_t* heap[], Node_heap_t* item) {
 }
 
 // Function to delete an element from the tree
-Node_heap_t* deleteRoot(Node_heap_t* heap[], Node_heap_t* item) {
+Node_t* deleteRoot(Node_t* heap[], Node_t* item) {
   int i;
   for (i = 0; i < h_size; i++) {
     if (item->i == heap[i]->i)
@@ -67,7 +67,7 @@ Node_heap_t* deleteRoot(Node_heap_t* heap[], Node_heap_t* item) {
   }
   
   swap(&heap[i], &heap[h_size - 1]);
-  Node_heap_t* ret = heap[h_size - 1];
+  Node_t* ret = heap[h_size - 1];
   heap[h_size - 1] = NULL;
   h_size -= 1;
   for (int i = h_size / 2 - 1; i >= 0; i--) {
@@ -77,7 +77,7 @@ Node_heap_t* deleteRoot(Node_heap_t* heap[], Node_heap_t* item) {
 }
 
 // Print the heap
-void printheap(Node_heap_t* heap[], int h_size) {
+void printheap(Node_t* heap[], int h_size) {
   for (int i = 0; i < h_size; ++i)
     printf("%d ", heap[i]->i);
   printf("\n");
@@ -85,8 +85,8 @@ void printheap(Node_heap_t* heap[], int h_size) {
 
 // Driver code
 int test() {
-  Node_heap_t* heap[10];
-  Node_heap_t* items = (Node_heap_t*) calloc(10,sizeof(items));
+  Node_t* heap[10];
+  Node_t* items = (Node_t*) calloc(10,sizeof(items));
   for (int i=0; i<10; i++){
     items[i].i=i;
   }

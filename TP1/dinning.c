@@ -62,7 +62,7 @@ int main()
 	//initialization
 	for (int i; i < 5; i++)
 	{
-		pthread_mutex_init(&lock[i], NULL);
+		pthread_mutex_init(& [i], NULL);
 	}
 
 	//Create thread

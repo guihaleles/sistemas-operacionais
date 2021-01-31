@@ -15,11 +15,11 @@ pthread_mutex_t lock;
 pthread_cond_t cond_var;
 
 #define DETERMINISTIC false
-
+int monitor_queue[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 int nextThread = -1; /* esses dados são compartilhados pelo(s) thread(s) */
 
 Person_t persons[num_persons];
-Node_heap_t heap[num_persons];
+Node_t heap[num_persons];
 
 
 int rand_int(){
@@ -45,8 +45,8 @@ void eat(Person_t *person) {
 
 }
 
-void generateNext(int i){
-        // printf("Working Thread:%d \n",i);
+void generateNext(){
+        printf("Working Thread:%d \n",nextThread);
         if(nextThread == num_persons-1)
         {            
             nextThread = 0;
@@ -55,7 +55,7 @@ void generateNext(int i){
         {
             nextThread++;
         }
-        // printf("Next Thread:%d \n",nextThread);
+        printf("Next Thread:%d \n",nextThread);
 }
 
 void work(Person_t *person){
@@ -64,7 +64,7 @@ void work(Person_t *person){
 }
 
 
-void *raj(){
+void *thr_raj(){
     printf("raj\n");
 
     if(nextThread==-1){
@@ -74,11 +74,10 @@ void *raj(){
     sleep(5);
 }
 
-void wait(Person_t *person, int i){
-    
+void wait_to_use_oven(Person_t *person, int i){
+    monitor_queue[i]=true;
     printf("%s quer usar o Forno\n", person->name);
-
-    queue(i);
+    pthread_cond_wait(person->mutex)
     nextThread = getHighestScoreId();
     pthread_mutex_lock(&lock);    
     while (nextThread != i)
@@ -93,20 +92,20 @@ void heatUp(Person_t *person){
 }
 
 
-void *monitor_microwave(void *arg)
+void *thr_person(void *arg)
 {
     int i= (int)arg;
     Person_t person = persons[i];
     
-    while(person.numberOfUses >= 1){        
+    while(persons[i]->numberOfUses >= 1){        
 
-        wait(&person, i);
-        // generateNext(i);
-        heatUp(&person);
+        wait_to_use_oven(persons[i], i);
+        //generateNext();
+        heatUp(persons[i]);
 
-        eat(&person);
+        eat(persons[i]);
 
-        work(&person);        
+        work(persons[i]);        
     }
 }
 
@@ -144,11 +143,11 @@ int main(int argc, char *argv[])
 
 	for (int i = 0; i < num_persons; i++)
 	{
-		pthread_create(&tid[i], NULL, monitor_microwave, (void *)i);
+		pthread_create(&tid[i], NULL, thr_person, (void *)i);
         printf("Thread create:%d \n",i);
 	}
         
-    pthread_create(&tid_raj,NULL,raj,NULL);  
+    pthread_create(&tid_raj,NULL,thr_raj,NULL);  
 
 	//Recycle thread
 	for (int i = 0; i < num_persons; i++)
