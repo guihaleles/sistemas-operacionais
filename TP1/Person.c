@@ -126,9 +126,9 @@ void enqueue_person(Node_t* heap[], Person_t* person) {
     if (person->partner_in_line == false){   
         heap_insert(heap, person->priority_node);
         printf("Enqueue: %s\n", person->name);
-        print_queue(heap, num_persons);
     }
-
+    update_queue(heap);
+    print_queue(heap, num_persons);
 }
 
 Person_t*  dequeue_person(Node_t* heap[]) {
@@ -176,6 +176,7 @@ bool check_deadlock(Node_t* heap[]){
     int ids_before[h_size];
     for(int i=0; i<h_size;i++)
         ids_before[i] = get_person(heap[i])->id;
+    heap_insert(heap, deleteRoot(heap, heap[0]));
     update_queue(heap);
     for(int i=0; i<h_size;i++)
         if (ids_before[i] != get_person(heap[i])->id)
@@ -207,13 +208,16 @@ int main(int argc, char *argv[])
     enqueue_person(heap, &persons[1]);
      enqueue_person(heap, &persons[5]);
     enqueue_person(heap, &persons[0]);
+    print_queue(heap, num_persons);
     if (check_deadlock(heap))
         printf("Deadlock!!!\n");
     printf("Max-Heap heap: %s \n", queue_first(heap)->name );
     enqueue_person(heap, &persons[6]);
+    print_queue(heap, num_persons);
     if (check_deadlock(heap))
         printf("Deadlock!!!\n");
     dequeue_person(heap);
+    print_queue(heap, num_persons);
     if (check_deadlock(heap))
         printf("Deadlock!!!\n");
     dequeue_person(heap);
