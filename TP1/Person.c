@@ -123,7 +123,7 @@ void enqueue_person(Node_t* heap[], Person_t* person) {
             person->partner_in_line = true;
             person->partner->partner_in_line = true;
             if (get_person(heap[i])->is_girlfriend)
-            heap[i]->data = (void*) person;         
+                heap[i]->data = (void*) person;         
         }
     }
     if (person->partner_in_line == false){   
