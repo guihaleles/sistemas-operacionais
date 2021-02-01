@@ -88,6 +88,7 @@ bool person_comparison(Node_t *a, Node_t *b)
      
 }   
 
+// Inicializa os personagens
 void init_persons(Person_t persons[], int numberOfUses)
 {
     for (int i = 0; i < num_persons; i++)
@@ -113,49 +114,46 @@ void init_persons(Person_t persons[], int numberOfUses)
         pthread_mutex_init(&persons[i].mutex,NULL);
     }
 }
+
+//Insere a pessoa no fila
 void enqueue_person(Node_t* heap[], Person_t* person) {  
-    // printf("Tentando Enqueue: %s\n", person->name);
+
     for(int i=0; heap[i] != NULL; i++){
         if (get_person(heap[i]) == person->partner){
             person->partner_in_line = true;
             person->partner->partner_in_line = true;
             if (get_person(heap[i])->is_girlfriend)
             heap[i]->data = (void*) person;         
-            // printf("Enqueue: %s, partner %s found!\n", person->name, person->partner->name);
-            // printf("Partner: %d, Partner %d found!\n", person->partner_in_line, person->partner->partner_in_line);
         }
     }
     if (person->partner_in_line == false){   
         heap_insert(heap, person->priority_node);
-        // printf("Enqueue: %s\n", person->name);
     }
-    // update_queue(heap);
-    // print_queue(heap, num_persons);
-    // printf("Fim Tentando Enqueue: %s\n", person->name);
 }
 
+// Retira a pessoa de maior prioridade da fila
 Person_t*  dequeue_person(Node_t* heap[]) {
+
     Person_t* person= ( Person_t*)heap[0]->data;
     if (person->partner_in_line == false){
         deleteRoot(heap, heap[0]);
         person->partner->partner_in_line = false;
     } else{
-        // printf("Partner");
         heap[0]->data = ( void*) person->partner;
         person->partner_in_line = false;
         person->partner->partner_in_line = false;
     }
-    // printf("Dequeue %s\n", person->name);
-    // update_queue(heap);
-    // print_queue(heap, num_persons);
+
     return person;
     
 }
 
+// Retorna a pessoa de maior prioridade da fila
 Person_t* queue_first(Node_t* heap[]) {
     return ((Person_t*)(heap[0]->data));
 }
-// Print the heap
+
+// Print heap
 void print_queue(Node_t* heap[], int h_size) {
   for (int i = 0; i < h_size; ++i){
     if (heap[i] != NULL){
@@ -169,15 +167,16 @@ void print_queue(Node_t* heap[], int h_size) {
   }   
 }
 
-
+// Rordena a fila
 void update_queue(Node_t* heap[]){
     for (int i = h_size / 2 - 1; i >= 0; i--)
         heapify(heap, h_size, i);
         
 }
 
+// Returna true se existe o deadlock
 bool check_deadlock(Node_t* heap[]){
-    //Return true if there is a deadlock
+
     int ids_before[h_size];
     for(int i=0; i<h_size;i++)
         ids_before[i] = get_person(heap[i])->id;
@@ -197,38 +196,6 @@ void print_persons(Person_t persons[]) {
   printf("\n");
 }
 
-// int main(int argc, char *argv[])
-// {
-//     //int h_size = 0;
-//     Node_t *heap[10];
-//     for (int i=0; i<num_persons; i++)
-//         heap[i]=NULL;
-    
-//     Person_t *persons = (Person_t*) calloc(num_persons,sizeof(Person_t));
-//     init_persons(persons, num_persons);
-//     print_queue(heap, num_persons);
-//     print_persons(persons);
-//     enqueue_person(heap, &persons[4]);
-//     enqueue_person(heap, &persons[3]);
-//     enqueue_person(heap, &persons[2]);
-//     enqueue_person(heap, &persons[1]);
-//      enqueue_person(heap, &persons[5]);
-//     enqueue_person(heap, &persons[0]);
-//     print_queue(heap, num_persons);
-//     if (check_deadlock(heap))
-//         printf("Deadlock!!!\n");
-//     printf("Max-Heap heap: %s \n", queue_first(heap)->name );
-//     enqueue_person(heap, &persons[6]);
-//     print_queue(heap, num_persons);
-//     if (check_deadlock(heap))
-//         printf("Deadlock!!!\n");
-//     dequeue_person(heap);
-//     print_queue(heap, num_persons);
-//     if (check_deadlock(heap))
-//         printf("Deadlock!!!\n");
-//     dequeue_person(heap);
-//     printf("\nDone \n");
-//     return 0;
-// }
+
 
 #endif
