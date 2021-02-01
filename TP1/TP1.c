@@ -5,22 +5,20 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "Person.c"
-#include "Queue.c"
 #define num_persons 8
 
-// Comando que estou usando para compilar:
-// gcc -pthread -o TP1 TP1.c
-//mutex 
+/* esses dados são compartilhados pelo(s) thread(s) */
 pthread_mutex_t lock;
-pthread_cond_t cond_var;
+pthread_cond_t cond_var[num_persons];
 
 #define DETERMINISTIC false
 int monitor_queue[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-int nextThread = -1; /* esses dados são compartilhados pelo(s) thread(s) */
+int nextThread = -1; 
+bool end = false;
 
 Person_t persons[num_persons];
 Node_t heap[num_persons];
-
+/*--------------------------------------------------*/
 
 int rand_int(){
     int ret;
@@ -32,30 +30,34 @@ int rand_int(){
 }
 
 
-
 void eat(Person_t *person) {
     // ver se tem aguem para liberar na fila
 
-    deQueue(person->id);
-    nextThread = getHighestScoreId();
-    pthread_cond_signal(&cond_var);
+    dequeue_person(heap);
+    // printf("\n");
+    // print_queue(heap,num_persons);
+    // printf("\n");
+
+    if(heap[0].data != NULL && !check_deadlock(heap)){
+
+        // printf("Entrou!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+        
+        Person_t *p = queue_first(heap);
+        nextThread = p->id;
+
+        // printf("NextThread eat: %d\n", nextThread);
+        // printf("NextThread eat: %s\n", p->name);
+
+        pthread_cond_signal(&cond_var[nextThread]);
+
+    }
+
     pthread_mutex_unlock(&lock);
+    
     (person->numberOfUses)--;
+    
     printf("%s vai comer\n",  person->name);
 
-}
-
-void generateNext(){
-        printf("Working Thread:%d \n",nextThread);
-        if(nextThread == num_persons-1)
-        {            
-            nextThread = 0;
-        }
-        else
-        {
-            nextThread++;
-        }
-        printf("Next Thread:%d \n",nextThread);
 }
 
 void work(Person_t *person){
@@ -65,41 +67,55 @@ void work(Person_t *person){
 
 
 void *thr_raj(){
-    printf("raj\n");
-    if(check_deadlock()){
-        //if(first_queue()->has_partner)
-        //    deQueue();
-        //    deQueue();
-        deQueue();
-        if(nextThread==-1){
-            deQueue((int)(position*drand48()));
-        }        
-    }
+    
+    Person_t* person;
+    while(!end)
+    {
 
-    sleep(5);
+        if(check_deadlock(heap)){
+            person = queue_first(heap);
+            // print_queue(heap,num_persons);
+            nextThread = person->id;
+            pthread_cond_signal(&cond_var[nextThread]);
+            printf("Raj detectou um deadlock, liberando %s\n", person->name);    
+        }
+
+        sleep(5);
+    }
+   
+
 }
 
 void wait_to_use_oven(Person_t *person, int i){
-    //monitor_queue[i]=true;
+
+
+    enqueue_person(heap,person);
     printf("%s quer usar o Forno\n", person->name);
-    //nextThread = getHighestScoreId();
-    if(!check_deadlock()){
-        cond_oven =True;
-    }
-    else
-        cond_oven =True;
-    //pthread_cond_wait(cond_oven, lock_oven);
-    //pthread_cond_wait(person->mutex);
-    pthread_mutex_lock(&lock);    
+    // printf("\n");
+    // print_queue(heap,num_persons);
+    // printf("\n");
+
+    Person_t *p = queue_first(heap);
+    nextThread = p->id;
+
+    pthread_mutex_lock(&lock);
+    // printf("NextThread: %d\n", nextThread);
+    // printf("thread queue:%d\n", i);   
+
     while (nextThread != i)
     {
-        printf("NextThread: %d\n", nextThread);
-        pthread_cond_wait(&cond_var, &lock);
+        pthread_cond_wait(&cond_var[i], &lock);
+        // printf("NextThread: %d\n", nextThread);
+        // printf("thread cond:%d\n", i);
     }
+    // printf("------\n");
+    // printf("%s assumiu o controle\n", person->name);
+    // printf("------\n");
 }
 
 void heatUp(Person_t *person){
     printf("%s começa a esquentar algo\n", person->name);
+    sleep(1);
 }
 
 
@@ -108,16 +124,18 @@ void *thr_person(void *arg)
     int i= (int)arg;
     Person_t person = persons[i];
     
-    while(persons[i]->numberOfUses >= 1){        
+    while(person.numberOfUses >= 1){        
 
-        wait_to_use_oven(persons[i], i);
-        //generateNext();
-        heatUp(persons[i]);
+        wait_to_use_oven(&person, i);
 
-        eat(persons[i]);
+        heatUp(&person);
 
-        work(persons[i]);        
+        eat(&person);
+
+        work(&person);        
     }
+    // print_queue(heap,num_persons);
+    printf("%s finalizou\n",person.name);
 }
 
 
@@ -155,7 +173,9 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < num_persons; i++)
 	{
 		pthread_create(&tid[i], NULL, thr_person, (void *)i);
-        printf("Thread create:%d \n",i);
+        // printf("Thread create:%d ",i);
+        // printf("Thread create:%s ",persons[i].name);
+        // printf("Thread create:%d \n",persons[i].id);
 	}
         
     pthread_create(&tid_raj,NULL,thr_raj,NULL);  
@@ -165,6 +185,8 @@ int main(int argc, char *argv[])
 	{
 		pthread_join(tid[i], NULL);
 	}
+    printf("finalizou\n");
+    end = true;
 
     pthread_join(&tid_raj,NULL);
 	//Destruction
