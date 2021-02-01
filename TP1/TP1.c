@@ -135,7 +135,7 @@ void *thr_person(void *arg)
         work(&person);        
     }
     // print_queue(heap,num_persons);
-    printf("%s finalizou\n",person.name);
+    // printf("%s finalizou\n",person.name);k
 }
 
 
